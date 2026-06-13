@@ -7,13 +7,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const button = document.getElementById("discoverButton");
     const challengeText = document.getElementById("challengeText");
+
+    const cameraButton = document.getElementById("cameraButton");
+    const galleryButton = document.getElementById("galleryButton");
     const cameraInput = document.getElementById("cameraInput");
+    const galleryInput = document.getElementById("galleryInput");
+
     const previewImage = document.getElementById("previewImage");
     const removePhotoButton = document.getElementById("removePhotoButton");
     const uploadButton = document.getElementById("uploadButton");
     const playerNameInput = document.getElementById("playerName");
+
     const guestbookMessage = document.getElementById("guestbookMessage");
     const guestbookButton = document.getElementById("guestbookButton");
+
+    cameraButton.addEventListener("click", () => {
+        cameraInput.click();
+    });
+
+    galleryButton.addEventListener("click", () => {
+        galleryInput.click();
+    });
 
     button.addEventListener("click", () => {
         const defi = obtenirDefiAleatoire();
@@ -26,9 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         challengeText.textContent = defi.texte;
     });
 
-    cameraInput.addEventListener("change", () => {
-        const file = cameraInput.files[0];
-
+    function afficherPreview(file) {
         if (!file) {
             previewImage.src = "";
             previewImage.removeAttribute("src");
@@ -37,19 +49,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const imageUrl = URL.createObjectURL(file);
+
         previewImage.src = imageUrl;
         removePhotoButton.style.display = "inline-block";
+    }
+
+    cameraInput.addEventListener("change", () => {
+        afficherPreview(cameraInput.files[0]);
+    });
+
+    galleryInput.addEventListener("change", () => {
+        afficherPreview(galleryInput.files[0]);
     });
 
     removePhotoButton.addEventListener("click", () => {
         cameraInput.value = "";
+        galleryInput.value = "";
+
         previewImage.src = "";
         previewImage.removeAttribute("src");
         removePhotoButton.style.display = "none";
     });
 
     uploadButton.addEventListener("click", async () => {
-        const file = cameraInput.files[0];
+        const file = cameraInput.files[0] || galleryInput.files[0];
         const playerName = playerNameInput.value.trim();
 
         if (!playerName) {
@@ -130,43 +153,47 @@ document.addEventListener("DOMContentLoaded", async () => {
         await chargerClassement();
 
         cameraInput.value = "";
+        galleryInput.value = "";
+
         previewImage.src = "";
         previewImage.removeAttribute("src");
         removePhotoButton.style.display = "none";
 
         alert("Photo envoyée avec succès !");
     });
-guestbookButton.addEventListener("click", async () => {
 
-    const playerName = playerNameInput.value.trim();
-    const message = guestbookMessage.value.trim();
+    guestbookButton.addEventListener("click", async () => {
+        const playerName = playerNameInput.value.trim();
+        const message = guestbookMessage.value.trim();
 
-    if (!playerName) {
-        alert("Veuillez entrer votre prénom.");
-        return;
-    }
+        if (!playerName) {
+            alert("Veuillez entrer votre prénom.");
+            return;
+        }
 
-    if (!message) {
-        alert("Veuillez écrire un message.");
-        return;
-    }
+        if (!message) {
+            alert("Veuillez écrire un message.");
+            return;
+        }
 
-    const { error } = await supabaseClient
-        .from("guestbook")
-        .insert({
-            prenom: playerName,
-            message: message
-        });
+        const { error } = await supabaseClient
+            .from("guestbook")
+            .insert({
+                prenom: playerName,
+                message: message
+            });
 
-    if (error) {
-        console.error(error);
-        alert("Erreur lors de la publication du message.");
-        return;
-    }
+        if (error) {
+            console.error(error);
+            alert("Erreur lors de la publication du message.");
+            return;
+        }
 
-    guestbookMessage.value = "";
+        guestbookMessage.value = "";
 
-    await chargerLivreOr();
+        await chargerLivreOr();
 
-    alert("Message publié dans le livre d'or !");
-});});
+        alert("Message publié dans le livre d'or !");
+    });
+
+});

@@ -158,18 +158,36 @@
 
         <section id="cameraSection">
 
-            <input
-                id="cameraInput"
-                type="file"
-                accept="image/*"
-                capture="environment">
+    <button id="cameraButton">
+        📷 Prendre une photo
+    </button>
 
-            <img
-                id="previewImage"
-                alt="Aperçu photo">
-                <button id="removePhotoButton" style="display: none;">
-    Retirer la photo
-</button>
+    <button id="galleryButton">
+        🖼️ Choisir une photo
+    </button>
+
+    <input
+        id="cameraInput"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        style="display:none;">
+
+    <input
+        id="galleryInput"
+        type="file"
+        accept="image/*"
+        style="display:none;">
+
+    <img
+        id="previewImage"
+        alt="Aperçu photo">
+
+    <button id="removePhotoButton" style="display: none;">
+        Retirer la photo
+    </button>
+
+</section>
 
         </section>
 
@@ -275,4 +293,3 @@
 
 </body>
 </html>
-<div id="rankingList"></div>
