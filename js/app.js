@@ -1,3 +1,4 @@
+let envoiEnCours = false;
 document.addEventListener("DOMContentLoaded", async () => {
 
     await chargerDefis();
@@ -73,6 +74,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     uploadButton.addEventListener("click", async () => {
+
+    if (envoiEnCours) {
+    return;
+}
+
+envoiEnCours = true;
+uploadButton.disabled = true;
+uploadButton.style.pointerEvents = "none";
+uploadButton.textContent = "Envoi en cours...";
+    
+
+    uploadButton.disabled = true;
+    uploadButton.textContent = "Envoi en cours...";
+
+    try {
         const file = cameraInput.files[0] || galleryInput.files[0];
         const playerName = playerNameInput.value.trim();
 
@@ -161,7 +177,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         removePhotoButton.style.display = "none";
 
         alert("Photo envoyée avec succès !");
-    });
+
+    } finally {
+    envoiEnCours = false;
+    uploadButton.disabled = false;
+    uploadButton.style.pointerEvents = "auto";
+    uploadButton.textContent = "Envoyer à la Machine à Souvenirs";
+
+        
+    }
+
+});
 
     guestbookButton.addEventListener("click", async () => {
         const playerName = playerNameInput.value.trim();
