@@ -1,12 +1,95 @@
-[
-  {
-    "id": 1,
-    "categorie": "Mariés",
-    "texte": "Prenez une photo avec les mariés."
-  },
-  {
-    "id": 2,
-    "categorie": "Ambiance",
-    "texte": "Prenez une photo d’un fou rire."
-  }
+let defis = [];
+let dernierDefiId = null;
+
+async function chargerDefis() {
+    const response = await fetch("data/defis.json");
+
+    if (!response.ok) {
+        throw new Error("Impossible de charger les défis.");
+    }
+
+    defis = await response.json();
+    return defis;
+}
+
+function obtenirDefiAleatoire() {
+    if (!defis.length) {
+        return null;
+    }
+
+    if (defis.length === 1) {
+        return defis[0];
+    }
+
+    let defi;
+
+    do {
+        const index = Math.floor(Math.random() * defis.length);
+        defi = defis[index];
+    } while (defi.id === dernierDefiId);
+
+    dernierDefiId = defi.id;
+
+    return defi;
+}[
+  [
+  { "id": 1, "categorie": "Mariés", "texte": "Fais un selfie avec les mariés." },
+  { "id": 2, "categorie": "Mariés", "texte": "Capture un regard complice." },
+  { "id": 3, "categorie": "Mariés", "texte": "Capture un fou rire des mariés." },
+  { "id": 4, "categorie": "Mariés", "texte": "Fais une photo surprise des mariés." },
+  { "id": 5, "categorie": "Mariés", "texte": "Capture un moment qu'ils n'ont pas remarqué." },
+  { "id": 6, "categorie": "Mariés", "texte": "Réalise LA photo qui finira dans leur salon." },
+
+  { "id": 7, "categorie": "Famille", "texte": "Réunis trois générations." },
+  { "id": 8, "categorie": "Famille", "texte": "Capture un câlin familial." },
+  { "id": 9, "categorie": "Famille", "texte": "Trouve deux personnes qui se ressemblent." },
+  { "id": 10, "categorie": "Famille", "texte": "Réunis la plus grande famille présente." },
+  { "id": 11, "categorie": "Famille", "texte": "Trouve le parent le plus ému." },
+
+  { "id": 12, "categorie": "Amis", "texte": "Fais une photo avec quelqu'un que tu viens de rencontrer." },
+  { "id": 13, "categorie": "Amis", "texte": "Réunis 8 invités qui ne sont pas à la même table." },
+  { "id": 14, "categorie": "Amis", "texte": "Trouve quelqu'un venu de plus loin que toi." },
+  { "id": 15, "categorie": "Amis", "texte": "Réunis des invités qui ne se connaissaient pas ce matin." },
+  { "id": 16, "categorie": "Amis", "texte": "Forme une équipe d'aventuriers." },
+  { "id": 17, "categorie": "Amis", "texte": "Trouve quelqu'un qui porte la même couleur que toi." },
+
+  { "id": 18, "categorie": "Drôle", "texte": "Capture la plus grosse grimace." },
+  { "id": 19, "categorie": "Drôle", "texte": "Fais croire qu'un invité est une star internationale." },
+  { "id": 20, "categorie": "Drôle", "texte": "Fais une photo où personne ne regarde l'objectif." },
+  { "id": 21, "categorie": "Drôle", "texte": "Capture un fou rire incontrôlable." },
+  { "id": 22, "categorie": "Drôle", "texte": "Fais croire qu'une personne lévite." },
+  { "id": 23, "categorie": "Drôle", "texte": "Réalise la photo la plus drôle du mariage." },
+
+  { "id": 24, "categorie": "Romantique", "texte": "Capture un regard amoureux." },
+  { "id": 25, "categorie": "Romantique", "texte": "Fais un cœur géant avec plusieurs invités." },
+  { "id": 26, "categorie": "Romantique", "texte": "Capture un geste tendre." },
+  { "id": 27, "categorie": "Romantique", "texte": "Trouve le baiser le plus discret." },
+  { "id": 28, "categorie": "Romantique", "texte": "Fais la photo la plus romantique de la soirée." },
+
+  { "id": 29, "categorie": "Soirée", "texte": "Capture l'instant où la fête démarre vraiment." },
+  { "id": 30, "categorie": "Soirée", "texte": "Trouve la table la plus animée." },
+  { "id": 31, "categorie": "Soirée", "texte": "Capture le toast le plus énergique." },
+  { "id": 32, "categorie": "Soirée", "texte": "Trouve le roi ou la reine de la soirée." },
+  { "id": 33, "categorie": "Soirée", "texte": "Fais une photo qui résume la fête." },
+  { "id": 34, "categorie": "Soirée", "texte": "Capture l'instant le plus mémorable." },
+
+  { "id": 35, "categorie": "Danse", "texte": "Capture le meilleur mouvement de danse." },
+  { "id": 36, "categorie": "Danse", "texte": "Trouve quelqu'un qui danse comme si personne ne le regardait." },
+  { "id": 37, "categorie": "Danse", "texte": "Capture une danse entre générations." },
+  { "id": 38, "categorie": "Danse", "texte": "Fais une photo où tout le monde saute." },
+  { "id": 39, "categorie": "Danse", "texte": "Trouve le danseur le plus motivé." },
+
+  { "id": 40, "categorie": "Table", "texte": "Capture le plus beau toast." },
+  { "id": 41, "categorie": "Table", "texte": "Fais une photo de toute ta table." },
+  { "id": 42, "categorie": "Table", "texte": "Trouve le plus grand gourmand." },
+  { "id": 43, "categorie": "Table", "texte": "Fais une photo où tout le monde trinque." },
+
+  { "id": 44, "categorie": "Enfants", "texte": "Capture un rire d'enfant." },
+  { "id": 45, "categorie": "Enfants", "texte": "Fais une photo d'un enfant qui danse." },
+  { "id": 46, "categorie": "Enfants", "texte": "Réalise la photo la plus mignonne du mariage." },
+
+  { "id": 47, "categorie": "Bonus Steampunk", "texte": "Photographiez l'équipage du dirigeable des mariés." },
+  { "id": 48, "categorie": "Bonus Steampunk", "texte": "Capturez un voyageur du temps infiltré." },
+  { "id": 49, "categorie": "Bonus Steampunk", "texte": "Faites croire qu'un invité contrôle le temps." },
+  { "id": 50, "categorie": "Bonus Steampunk", "texte": "Réalisez la photo la plus épique de toute l'histoire de la Machine à Souvenirs." }
 ]
