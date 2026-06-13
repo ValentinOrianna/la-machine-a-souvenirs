@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const button = document.getElementById("discoverButton");
     const challengeText = document.getElementById("challengeText");
-
+    const challengeCategory = document.getElementById("challengeCategory");
+    
     const cameraButton = document.getElementById("cameraButton");
     const galleryButton = document.getElementById("galleryButton");
     const cameraInput = document.getElementById("cameraInput");
@@ -36,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             challengeText.textContent = "Aucun défi disponible.";
             return;
         }
-
+        challengeCategory.textContent = defi.categorie;
         challengeText.textContent = defi.texte;
     });
 
