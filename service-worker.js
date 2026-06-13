@@ -1,0 +1,51 @@
+const CACHE_NAME = "la-machine-a-souvenirs-v1";
+
+const FILES_TO_CACHE = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+
+  "./css/style.css",
+  "./css/steampunk.css",
+  "./css/animations.css",
+
+  "./js/app.js",
+  "./js/pwa.js",
+
+  "./assets/logo/logo.png",
+  "./assets/background/background.png",
+  "./assets/ui/frame.png",
+
+  "./assets/icons/camera.png",
+  "./assets/icons/send.png",
+  "./assets/icons/trophy.png",
+  "./assets/icons/book.png",
+  "./assets/icons/setting.png",
+  "./assets/icons/close.png"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      )
+    )
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedFile) => {
+      return cachedFile || fetch(event.request);
+    })
+  );
+});

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <!-- Encodage -->
+    <meta charset="UTF-8">
+
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Couleur du navigateur -->
+    <meta name="theme-color" content="#3b2416">
+
+    <!-- Description -->
+    <meta name="description"
+        content="La Machine à Souvenirs - Capturez les plus beaux moments du mariage grâce à une expérience steampunk immersive.">
+
+    <!-- Titre -->
+    <title>La Machine à Souvenirs</title>
+
+    <!-- Manifest PWA -->
+    
+
+    <!-- Icône -->
+    <link rel="icon" href="assets/pwa/icon192.png">
+
+    <!-- Feuille de style principale -->
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <!-- ===================================== -->
+    <!-- INTRODUCTION ANIMÉE                   -->
+    <!-- ===================================== -->
+
+    <section id="intro">
+
+        <div id="introOverlay">
+
+            <h1 class="introTitle">
+                La Machine à Souvenirs
+            </h1>
+
+            <p class="introSubtitle">
+                Activez les mécanismes...
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- ===================================== -->
+    <!-- FOND STEAMPUNK                        -->
+    <!-- ===================================== -->
+
+<div id="backgroundEffects">
+
+    <div id="smokeContainer">
+        <img src="assets/smoke/smoke1.png" class="smoke smoke1" alt="">
+        <img src="assets/smoke/smoke2.png" class="smoke smoke2" alt="">
+        <img src="assets/smoke/smoke3.png" class="smoke smoke3" alt="">
+    </div>
+
+    <div id="gearContainer">
+        <img src="assets/gears/gear-small1.png" class="gear-gear-small1" alt="">
+        <img src="assets/gears/gear-small2.png" class="gear-gear-small2" alt="">
+        <img src="assets/gears/gear-medium.png" class="gear-gear-medium" alt="">
+        <img src="assets/gears/gear-large.png" class="gear gear-large" alt="">
+    </div>
+
+</div>
+
+    <!-- ===================================== -->
+    <!-- CONTENU PRINCIPAL                     -->
+    <!-- ===================================== -->
+
+    <main id="app">
+
+        <!-- Cadre des mariés -->
+
+        <section id="coupleFrame">
+
+            <div class="frameGlow">
+
+                <img
+                    id="couplePhoto"
+                    src="assets/img/couple.jpg"
+                    alt="Les mariés">
+
+            </div>
+
+        </section>
+
+        <!-- Titre -->
+
+        <section id="headerSection">
+
+            <h1>
+
+                La Machine à Souvenirs
+
+            </h1>
+
+            <h2>
+
+                Capturez un instant unique
+
+            </h2>
+
+        </section>
+
+        <!-- Formulaire prénom -->
+
+        <section id="playerSection">
+
+            <input
+                type="text"
+                id="playerName"
+                maxlength="30"
+                placeholder="Votre prénom">
+
+        </section>
+
+        <!-- Bouton principal -->
+
+        <section id="challengeSection">
+
+            <button id="discoverButton">
+
+                ⚙️ Découvrir un défi
+
+            </button>
+
+        </section>
+
+        <!-- Défi -->
+
+        <section id="challengeContainer">
+
+            <h2>
+
+                Défi
+
+            </h2>
+
+            <p id="challengeText">
+
+                En attente...
+
+            </p>
+
+        </section>
+
+        <!-- Photo -->
+
+        <section id="cameraSection">
+
+            <input
+                id="cameraInput"
+                type="file"
+                accept="image/*"
+                capture="environment">
+
+            <img
+                id="previewImage"
+                alt="Aperçu photo">
+                <button id="removePhotoButton" style="display: none;">
+    Retirer la photo
+</button>
+
+        </section>
+
+        <!-- Validation -->
+
+        <section id="uploadSection">
+
+            <button id="uploadButton">
+
+                Envoyer à la Machine à Souvenirs
+
+            </button>
+
+        </section>
+
+        <!-- Galerie -->
+
+        <section id="gallerySection">
+
+            <h2>
+
+                Galerie en direct
+
+            </h2>
+
+            <div id="galleryGrid"></div>
+
+        </section>
+
+        <!-- Classement -->
+
+        <section id="rankingSection">
+
+            <h2>
+
+                Classement des invités
+
+            </h2>
+
+            <div id="rankingList"></div>
+
+        </section>
+
+        <!-- Livre d'or -->
+
+        <section id="guestbookSection">
+
+            <h2>
+
+                Livre d'or
+
+            </h2>
+
+           <textarea
+    id="guestbookMessage"
+    maxlength="300"
+    placeholder="Laissez un souvenir..."></textarea>
+
+            <button id="guestbookButton">
+
+                Publier
+
+            </button>
+
+            <div id="guestbookMessages"></div>
+
+        </section>
+
+    </main>
+
+    <!-- ===================================== -->
+    <!-- FOOTER                                -->
+    <!-- ===================================== -->
+
+    <footer>
+
+        <p>
+
+            © La Machine à Souvenirs
+
+        </p>
+
+    </footer>
+
+    <!-- ===================================== -->
+    <!-- SUPABASE                              -->
+    <!-- ===================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+    <!-- Script principal -->
+
+
+    <!-- PWA -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/defis.js"></script>
+<script src="js/gallery.js"></script>
+<script src="js/leaderboard.js"></script>
+<script src="js/guestbook.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
+<div id="rankingList"></div>

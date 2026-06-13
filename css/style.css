@@ -1,0 +1,344 @@
+/* ===================================== */
+/* RESET */
+/* ===================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===================================== */
+/* BODY */
+/* ===================================== */
+
+body {
+    background: #1f140d;
+    color: #f2d49b;
+    font-family: Georgia, serif;
+    min-height: 100vh;
+    text-align: center;
+}
+
+/* ===================================== */
+/* CONTENEUR PRINCIPAL */
+/* ===================================== */
+
+#app {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    min-height: 100vh;
+}
+
+/* ===================================== */
+/* INTRO */
+/* ===================================== */
+
+#intro {
+    padding: 40px 20px;
+}
+
+.introTitle {
+    font-size: 4rem;
+    color: #d6a45b;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(255,180,80,0.4);
+}
+}
+
+.introSubtitle {
+    color: #c9b28d;
+    font-size: 1.1rem;
+}
+
+/* ===================================== */
+/* PHOTO DU COUPLE */
+/* ===================================== */
+
+#coupleFrame {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+#couplePhoto {
+    width: 350px;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 6px solid #9b6a2f;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ===================================== */
+/* TITRES */
+/* ===================================== */
+
+h1 {
+    color: #d6a45b;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #cfa15e;
+    margin-bottom: 15px;
+}
+
+/* ===================================== */
+/* SECTIONS */
+/* ===================================== */
+
+section {
+    margin: 30px 0;
+}
+
+/* ===================================== */
+/* INPUT */
+/* ===================================== */
+
+#playerName {
+    width: 320px;
+    max-width: 90%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px solid #8b6b3f;
+    background: #2a1a11;
+    color: #f2d49b;
+    font-size: 1rem;
+}
+
+/* ===================================== */
+/* BOUTONS */
+/* ===================================== */
+
+button {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #8b6b3f;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #b88a4a;
+}
+
+/* ===================================== */
+/* DEFI */
+/* ===================================== */
+
+#challengeContainer {
+    max-width: 700px;
+    margin: auto;
+}
+
+#challengeText {
+    font-size: 1.2rem;
+    color: #f0d6a3;
+}
+
+/* ===================================== */
+/* PHOTO */
+/* ===================================== */
+
+#previewImage {
+    max-width: 350px;
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 12px;
+}
+
+/* ===================================== */
+/* GALERIE */
+/* ===================================== */
+
+#galleryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* ===================================== */
+/* LIVRE D'OR */
+/* ===================================== */
+
+#guestbookMessage {
+    width: 90%;
+    max-width: 600px;
+    height: 120px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #2a1a11;
+    color: #f2d49b;
+    border: 2px solid #8b6b3f;
+}
+
+/* ===================================== */
+/* FOOTER */
+/* ===================================== */
+
+footer {
+    margin-top: 60px;
+    padding: 20px;
+    color: #b89b73;
+}
+
+/* ===================================== */
+/* MOBILE */
+/* ===================================== */
+
+@media (max-width: 768px) {
+
+    .introTitle {
+        font-size: 2rem;
+    }
+
+    #couplePhoto {
+        width: 280px;
+        height: 280px;
+    }
+
+    #playerName {
+        width: 90%;
+    }
+}body {
+    background-image:
+        linear-gradient(rgba(31, 20, 13, 0.65), rgba(31, 20, 13, 0.85)),
+        url("../assets/background/background.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+#coupleFrame {
+    width: 500px;
+    height: 500px;
+    margin: 40px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../assets/ui/frame.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+transform: translateY(20px);
+}
+
+#couplePhoto {
+    width: 360px;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: none;
+}/* ===================================== */
+/* ENGRENAGES */
+/* ===================================== */
+
+#gearContainer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.gear {
+    position: absolute;
+    opacity: 0.25;
+    animation: rotateGear 30s linear infinite;
+}
+
+.gear1 {
+    width: 120px;
+    top: 120px;
+    left: 50px;
+}
+
+.gear2 {
+    width: 90px;
+    bottom: 120px;
+    left: 100px;
+}
+
+.gear3 {
+    width: 180px;
+    top: 180px;
+    right: 80px;
+}
+
+.gear4 {
+    width: 260px;
+    bottom: 50px;
+    right: 50px;
+}
+
+@keyframes rotateGear {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}/* VAPEUR */
+
+#smokeContainer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.smoke {
+    position: absolute;
+    opacity: 1;
+    animation: smokeMove 12s ease-in-out infinite alternate;
+}
+
+.smoke1 {
+    width: 800px;
+    left: 5%;
+    bottom: 5%;
+}
+
+.smoke2 {
+    width: 420px;
+    right: 8%;
+    bottom: 10%;
+    animation-duration: 16s;
+}
+
+.smoke3 {
+    width: 600px;
+    left: 35%;
+    top: 10%;
+    opacity: 0.10;
+    animation-duration: 20s;
+}
+
+@keyframes smokeMove {
+    from {
+        transform: translateY(20px) scale(1);
+    }
+
+    to {
+        transform: translateY(-40px) scale(1.08);
+    }
+}#backgroundEffects {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+#app,
+#intro,
+footer {
+    position: relative;
+    z-index: 5;
+}
