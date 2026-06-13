@@ -35,6 +35,12 @@ async function chargerGalerie() {
 
         galleryGrid.appendChild(img);
     }
+    const photoCount = document.getElementById("photoCount");
+
+if (photoCount) {
+    photoCount.textContent =
+        `📸 ${data.length} souvenirs capturés`;
+}
 }
 
 function ouvrirPhoto(url) {

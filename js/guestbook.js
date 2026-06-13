@@ -27,5 +27,10 @@ async function chargerLivreOr() {
         container.appendChild(bloc);
 
     });
+const messageCount = document.getElementById("messageCount");
 
+if (messageCount) {
+    messageCount.textContent =
+        `📖 ${data.length} messages dans le livre d'or`;
+}
 }
