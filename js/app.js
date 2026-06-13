@@ -166,17 +166,16 @@ uploadButton.textContent = "Envoi en cours...";
             return;
         }
 
-        await chargerGalerie();
-        await chargerClassement();
+       await chargerGalerie();
+await chargerClassement();
 
-        cameraInput.value = "";
-        galleryInput.value = "";
+cameraInput.value = "";
+galleryInput.value = "";
 
-        previewImage.src = "";
-        previewImage.removeAttribute("src");
-        removePhotoButton.style.display = "none";
+previewImage.src = "";
+previewImage.removeAttribute("src");
+removePhotoButton.style.display = "none";
 
-        alert("Photo envoyée avec succès !");
 
     } finally {
     envoiEnCours = false;
