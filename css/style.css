@@ -474,3 +474,18 @@ p {
 #guestbookMessages small {
     color: #c9b28d;
 }
+.photoCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.likeButton {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.likeButton:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}

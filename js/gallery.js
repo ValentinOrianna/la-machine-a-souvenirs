@@ -36,7 +36,7 @@ async function chargerGalerie() {
     afficherPhotosSuivantes();
 }
 
-function afficherPhotosSuivantes() {
+async function afficherPhotosSuivantes() {
 
     const galleryGrid = document.getElementById("galleryGrid");
 
@@ -50,6 +50,9 @@ function afficherPhotosSuivantes() {
         const { data: urlData } = supabaseClient.storage
             .from("photo mariage")
             .getPublicUrl(`souvenirs/${photo.name}`);
+
+        const carte = document.createElement("div");
+        carte.className = "photoCard";
 
         const img = document.createElement("img");
 
@@ -65,12 +68,71 @@ function afficherPhotosSuivantes() {
             ouvrirPhoto(urlData.publicUrl);
         });
 
-        galleryGrid.appendChild(img);
+        const likeButton = document.createElement("button");
+        likeButton.className = "likeButton";
+
+        const dejaLike = localStorage.getItem(`like-${photo.name}`);
+
+        const nombreLikes = await compterLikes(photo.name);
+
+        likeButton.textContent = dejaLike
+            ? `❤️ ${nombreLikes}`
+            : `🤍 ${nombreLikes}`;
+
+        likeButton.disabled = !!dejaLike;
+
+        likeButton.addEventListener("click", async () => {
+
+            if (localStorage.getItem(`like-${photo.name}`)) {
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from("likes")
+                .insert({
+                    photo_name: photo.name
+                });
+
+            if (error) {
+                console.error(error);
+                alert("Erreur lors du like.");
+                return;
+            }
+
+            localStorage.setItem(`like-${photo.name}`, "true");
+
+            const nouveauTotal = await compterLikes(photo.name);
+            likeButton.textContent = `❤️ ${nouveauTotal}`;
+            likeButton.disabled = true;
+        });
+
+        carte.appendChild(img);
+        carte.appendChild(likeButton);
+
+        galleryGrid.appendChild(carte);
     }
 
     photosAffichees += photosAShow.length;
 
     gererBoutonVoirPlus();
+}
+
+async function compterLikes(photoName) {
+
+    const { count, error } = await supabaseClient
+        .from("likes")
+        .select("*", {
+            count: "exact",
+            head: true
+        })
+        .eq("photo_name", photoName);
+
+    if (error) {
+        console.error(error);
+        return 0;
+    }
+
+    return count || 0;
 }
 
 function gererBoutonVoirPlus() {
