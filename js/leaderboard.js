@@ -13,6 +13,20 @@ async function chargerClassement() {
         return;
     }
 
+ let participantCount = document.getElementById("participantCount");
+const statsSection = document.getElementById("statsSection");
+
+if (!participantCount && statsSection) {
+    participantCount = document.createElement("div");
+    participantCount.id = "participantCount";
+    statsSection.appendChild(participantCount);
+}
+
+if (participantCount) {
+    participantCount.textContent =
+        `🏆 ${participants.length} participant(s)`;
+}
+
     const classement = [];
 
     for (const participant of participants) {
@@ -50,7 +64,5 @@ async function chargerClassement() {
         `;
 
         rankingList.appendChild(ligne);
-
     });
-
 }

@@ -1,6 +1,6 @@
 let toutesLesPhotos = [];
 let photosAffichees = 0;
-const NOMBRE_PAR_PAGE = 10;
+const NOMBRE_PAR_PAGE = 50;
 
 async function chargerGalerie() {
 
