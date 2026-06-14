@@ -530,4 +530,25 @@ p {
     align-items: center;
     justify-content: center;
     gap: 10px;
+}#topPhotos {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.topPhotoCard {
+    background: rgba(20, 10, 5, 0.75);
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.topPhotoCard img {
+    width: 150px;
+    border-radius: 12px;
+}
+
+.topPhotoCard p {
+    margin-top: 8px;
+    font-weight: bold;
 }

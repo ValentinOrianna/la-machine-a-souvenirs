@@ -174,4 +174,61 @@ function ouvrirPhoto(url) {
     });
 
     document.body.appendChild(overlay);
+}async function chargerTopPhotos() {
+
+    const container = document.getElementById("topPhotos");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const { data: likes, error } = await supabaseClient
+        .from("likes")
+        .select("*");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    const compteLikes = {};
+
+    likes.forEach(like => {
+
+        if (!compteLikes[like.photo_name]) {
+            compteLikes[like.photo_name] = 0;
+        }
+
+        compteLikes[like.photo_name]++;
+    });
+
+    const top3 = Object.entries(compteLikes)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+
+    for (let i = 0; i < top3.length; i++) {
+
+        const [photoName, nbLikes] = top3[i];
+
+        const { data: urlData } = supabaseClient.storage
+            .from("photo mariage")
+            .getPublicUrl(`souvenirs/${photoName}`);
+
+        let medal = "🏅";
+
+        if (i === 0) medal = "🥇";
+        if (i === 1) medal = "🥈";
+        if (i === 2) medal = "🥉";
+
+        const card = document.createElement("div");
+
+        card.className = "topPhotoCard";
+
+        card.innerHTML = `
+            <img src="${urlData.publicUrl}">
+            <p>${medal} ❤️ ${nbLikes}</p>
+        `;
+
+        container.appendChild(card);
+    }
 }

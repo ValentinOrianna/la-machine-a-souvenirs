@@ -2,6 +2,7 @@ let envoiEnCours = false;
 document.addEventListener("DOMContentLoaded", async () => {
 
     await chargerDefis();
+    await chargerTopPhotos();
     await chargerGalerie();
     await chargerClassement();
     await chargerLivreOr();
