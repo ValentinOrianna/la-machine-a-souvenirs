@@ -552,3 +552,26 @@ p {
     margin-top: 8px;
     font-weight: bold;
 }
+#howToSection {
+    background: rgba(20, 10, 5, 0.75);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 30px 0;
+}
+
+#howToSection h3 {
+    color: #d6a45b;
+    margin-bottom: 15px;
+}
+
+.howToSteps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.howToSteps div {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 10px;
+}
