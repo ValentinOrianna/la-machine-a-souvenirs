@@ -20,6 +20,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const removePhotoButton = document.getElementById("removePhotoButton");
     const uploadButton = document.getElementById("uploadButton");
     const playerNameInput = document.getElementById("playerName");
+    const savedPlayerName = localStorage.getItem("playerName");
+
+if (savedPlayerName) {
+    playerNameInput.value = savedPlayerName;
+}
 
     const guestbookMessage = document.getElementById("guestbookMessage");
     const guestbookButton = document.getElementById("guestbookButton");
@@ -92,6 +97,7 @@ uploadButton.textContent = "Envoi en cours...";
     try {
         const file = cameraInput.files[0] || galleryInput.files[0];
         const playerName = playerNameInput.value.trim();
+        localStorage.setItem("playerName", playerName);
 
         if (!playerName) {
             alert("Veuillez entrer votre prénom.");
@@ -191,6 +197,7 @@ removePhotoButton.style.display = "none";
 
     guestbookButton.addEventListener("click", async () => {
         const playerName = playerNameInput.value.trim();
+        localStorage.setItem("playerName", playerName);
         const message = guestbookMessage.value.trim();
 
         if (!playerName) {
