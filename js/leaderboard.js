@@ -2,6 +2,11 @@ async function chargerClassement() {
 
     const rankingList = document.getElementById("rankingList");
 
+    if (!rankingList) {
+        console.warn("rankingList introuvable");
+        return;
+    }
+
     rankingList.innerHTML = "";
 
     const { data: participants, error } = await supabaseClient
@@ -13,19 +18,12 @@ async function chargerClassement() {
         return;
     }
 
- let participantCount = document.getElementById("participantCount");
-const statsSection = document.getElementById("statsSection");
+    const participantCount = document.getElementById("participantCount");
 
-if (!participantCount && statsSection) {
-    participantCount = document.createElement("div");
-    participantCount.id = "participantCount";
-    statsSection.appendChild(participantCount);
-}
-
-if (participantCount) {
-    participantCount.textContent =
-        `🏆 ${participants.length} participant(s)`;
-}
+    if (participantCount) {
+        participantCount.textContent =
+            `🏆 ${participants.length} participant(s)`;
+    }
 
     const classement = [];
 
@@ -57,21 +55,21 @@ if (participantCount) {
         else if (index === 1) medal = "🥈";
         else if (index === 2) medal = "🥉";
 
-       const badge = obtenirBadge(joueur.photos);
+        const badge = obtenirBadge(joueur.photos);
 
-ligne.innerHTML = `
-    ${medal}
-    <strong>${joueur.prenom}</strong>
-    — ${joueur.photos} photo(s)
-
-    <br>
-
-    <small>${badge}</small>
-`;
+        ligne.innerHTML = `
+            ${medal}
+            <strong>${joueur.prenom}</strong>
+            — ${joueur.photos} photo(s)
+            <br>
+            <small>${badge}</small>
+        `;
 
         rankingList.appendChild(ligne);
     });
-}function obtenirBadge(nombrePhotos) {
+}
+
+function obtenirBadge(nombrePhotos) {
 
     if (nombrePhotos >= 50) {
         return "👑 Légende du mariage";

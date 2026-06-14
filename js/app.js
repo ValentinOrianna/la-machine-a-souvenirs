@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const uploadButton = document.getElementById("uploadButton");
     const playerNameInput = document.getElementById("playerName");
     const savedPlayerName = localStorage.getItem("playerName");
+    const uploadButtonText = uploadButton.querySelector("span");
 
 if (savedPlayerName) {
     playerNameInput.value = savedPlayerName;
@@ -92,12 +93,8 @@ playerNameInput.addEventListener("input", () => {
 envoiEnCours = true;
 uploadButton.disabled = true;
 uploadButton.style.pointerEvents = "none";
-uploadButton.textContent = "Envoi en cours...";
+uploadButtonText.textContent = "Envoi en cours...";
     
-
-    uploadButton.disabled = true;
-    uploadButton.textContent = "Envoi en cours...";
-
     try {
         const file = cameraInput.files[0] || galleryInput.files[0];
         const playerName = playerNameInput.value.trim();
@@ -192,16 +189,28 @@ removePhotoButton.style.display = "none";
     envoiEnCours = false;
     uploadButton.disabled = false;
     uploadButton.style.pointerEvents = "auto";
-    uploadButton.textContent = "Envoyer à la Machine à Souvenirs";
+    uploadButtonText.textContent = "Envoyer à la Machine à Souvenirs";
 
         
     }
 
 });
+     let messageEnCours = false;
 
-    guestbookButton.addEventListener("click", async () => {
+guestbookButton.addEventListener("click", async () => {
+
+    if (messageEnCours) {
+        return;
+    }
+
+    messageEnCours = true;
+    guestbookButton.disabled = true;
+    guestbookButton.textContent = "Publication...";
+
+    try {
         const playerName = playerNameInput.value.trim();
         localStorage.setItem("playerName", playerName);
+
         const message = guestbookMessage.value.trim();
 
         if (!playerName) {
@@ -231,7 +240,16 @@ removePhotoButton.style.display = "none";
 
         await chargerLivreOr();
 
-        alert("Message publié dans le livre d'or !");
+        guestbookButton.textContent = "✅ Message publié !";
+
+        setTimeout(() => {
+            guestbookButton.textContent = "Publier";
+        }, 2000);
+
+    } finally {
+        messageEnCours = false;
+        guestbookButton.disabled = false;
+    }
     });
 
 });

@@ -1,5 +1,6 @@
 let defis = [];
 let dernierDefiId = null;
+let derniereCategorie = null;
 
 async function chargerDefis() {
     const response = await fetch("data/defis.json");
@@ -9,7 +10,6 @@ async function chargerDefis() {
     }
 
     defis = await response.json();
-    return defis;
 }
 
 function obtenirDefiAleatoire() {
@@ -17,18 +17,70 @@ function obtenirDefiAleatoire() {
         return null;
     }
 
-    if (defis.length === 1) {
-        return defis[0];
+    let defisPossibles = defis.filter(defi =>
+        defi.id !== dernierDefiId &&
+        defi.categorie !== derniereCategorie
+    );
+
+    if (!defisPossibles.length) {
+        defisPossibles = defis.filter(defi =>
+            defi.id !== dernierDefiId
+        );
     }
 
-    let defi;
+    if (!defisPossibles.length) {
+        defisPossibles = defis;
+    }
 
-    do {
-        const index = Math.floor(Math.random() * defis.length);
-        defi = defis[index];
-    } while (defi.id === dernierDefiId);
+    const index = Math.floor(Math.random() * defisPossibles.length);
+    const defi = defisPossibles[index];
 
     dernierDefiId = defi.id;
+    derniereCategorie = defi.categorie;
 
     return defi;
 }
+
+function afficherDefi(defi) {
+    const categorie = document.getElementById("challengeCategory");
+    const texte = document.getElementById("challengeText");
+
+    if (categorie) {
+        categorie.textContent = defi.categorie;
+    }
+
+    if (texte) {
+        texte.textContent = defi.texte;
+    }
+}
+
+async function initialiserDefis() {
+    try {
+        await chargerDefis();
+
+        const bouton = document.getElementById("discoverButton");
+
+        if (!bouton) {
+            return;
+        }
+
+        bouton.addEventListener("click", () => {
+            const defi = obtenirDefiAleatoire();
+
+            if (defi) {
+                afficherDefi(defi);
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        const texte = document.getElementById("challengeText");
+
+        if (texte) {
+            texte.textContent = "Impossible de charger les défis.";
+        }
+    }
+}
+
+initialiserDefis();

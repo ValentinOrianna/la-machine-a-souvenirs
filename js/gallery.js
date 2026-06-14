@@ -4,7 +4,12 @@ const NOMBRE_PAR_PAGE = 50;
 
 async function chargerGalerie() {
 
-    const galleryGrid = document.getElementById("galleryGrid");
+   const galleryGrid = document.getElementById("galleryGrid");
+
+if (!galleryGrid) {
+    console.warn("galleryGrid introuvable");
+    return;
+}
     galleryGrid.innerHTML = "";
 
     photosAffichees = 0;
@@ -77,6 +82,7 @@ async function afficherPhotosSuivantes() {
             : `🤍 ${nombreLikes}`;
 
         likeButton.disabled = !!dejaLike;
+        await chargerTopPhotos();
 
         likeButton.addEventListener("click", async () => {
 

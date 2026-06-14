@@ -13,11 +13,17 @@
 /* ===================================== */
 
 body {
-    background: #1f140d;
+    background:
+        linear-gradient(rgba(31, 20, 13, 0.65), rgba(31, 20, 13, 0.85)),
+        url("../assets/background/background.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: #f2d49b;
     font-family: Georgia, serif;
     min-height: 100vh;
     text-align: center;
+    overflow-x: hidden;
 }
 
 /* ===================================== */
@@ -206,13 +212,6 @@ footer {
     #playerName {
         width: 90%;
     }
-}body {
-    background-image:
-        linear-gradient(rgba(31, 20, 13, 0.65), rgba(31, 20, 13, 0.85)),
-        url("../assets/background/background.png");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
 }
 
 #coupleFrame {
@@ -252,25 +251,25 @@ transform: translateY(20px);
     animation: rotateGear 30s linear infinite;
 }
 
-.gear1 {
+.gear-small1 {
     width: 120px;
     top: 120px;
     left: 50px;
 }
 
-.gear2 {
+.gear-small2 {
     width: 90px;
     bottom: 120px;
     left: 100px;
 }
 
-.gear3 {
+.gear-medium {
     width: 180px;
     top: 180px;
     right: 80px;
 }
 
-.gear4 {
+.gear-large {
     width: 260px;
     bottom: 50px;
     right: 50px;
@@ -348,9 +347,6 @@ transform: translateY(20px);
 
 .smoke,
 .gear,
-.gear-gear-small1,
-.gear-gear-small2,
-.gear-gear-medium,
 .gear-large {
     position: absolute;
     z-index: 1;
@@ -403,6 +399,7 @@ footer {
 
     border-radius: 16px;
     border: 4px solid #cfa15e;
+
 }#challengeContainer {
     background: rgba(20, 10, 5, 0.75);
     padding: 20px;
@@ -426,26 +423,7 @@ p {
 }#participantCount {
     display: block !important;
     visibility: visible !important;
-}#statsSection {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin: 20px 0;
-}
 
-#statsSection div {
-    display: block;
-    background: rgba(20, 10, 5, 0.75);
-    padding: 12px 18px;
-    border-radius: 12px;
-    color: #f2d49b;
-    font-weight: bold;
-}
-
-#participantCount {
-    display: block !important;
-    visibility: visible !important;
 }#statsSection {
     display: grid !important;
     grid-template-columns: 1fr;
@@ -506,11 +484,6 @@ p {
     height: 24px;
     object-fit: contain;
     flex-shrink: 0;
-}#uploadButton .buttonIcon {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    flex-shrink: 0;
 }
 
 #uploadButton {
@@ -518,23 +491,13 @@ p {
     align-items: center;
     justify-content: center;
     gap: 10px;
-}#uploadButton .buttonIcon {
+}
+
+#uploadButton .buttonIcon {
     width: 28px !important;
     height: 28px !important;
     max-width: 28px !important;
     max-height: 28px !important;
-}
-
-#uploadButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}#topPhotos {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
 }
 
 .topPhotoCard {
@@ -585,16 +548,15 @@ p {
 }
 
 @media (max-width: 768px) {
-
     #galleryGrid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
     .photoCard img {
         width: 100% !important;
-        max-width: 100px;
-        margin: 0 !important;
+        max-width: 150px;
+        margin: 0 auto !important;
     }
 
     .likeButton {
@@ -606,6 +568,7 @@ p {
     width: 100%;
     border-radius: 12px;
     cursor: pointer;
+    
 }@media (max-width: 768px) {
     #coupleFrame {
         width: 320px;

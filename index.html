@@ -20,7 +20,7 @@
     <title>La Machine à Souvenirs</title>
 
     <!-- Manifest PWA -->
-    
+    <link rel="manifest" href="manifest.json">
 
     <!-- Icône -->
     <link rel="icon" href="assets/pwa/icon192.png">
@@ -65,9 +65,9 @@
     </div>
 
     <div id="gearContainer">
-        <img src="assets/gears/gear-small1.png" class="gear-gear-small1" alt="">
-        <img src="assets/gears/gear-small2.png" class="gear-gear-small2" alt="">
-        <img src="assets/gears/gear-medium.png" class="gear-gear-medium" alt="">
+        <img src="assets/gears/gear-small1.png" class="gear gear-small1" alt="">
+        <img src="assets/gears/gear-small2.png" class="gear gear-small2" alt="">
+        <img src="assets/gears/gear-medium.png" class="gear gear-medium" alt="">
         <img src="assets/gears/gear-large.png" class="gear gear-large" alt="">
     </div>
 
@@ -164,10 +164,8 @@
 
 </section>
 
-</section>
-        <!-- Formulaire prénom -->
-
-        <section id="playerSection">
+<!-- Formulaire prénom -->
+<section id="playerSection">
 
             <input
                 type="text"
@@ -236,8 +234,9 @@
         style="display:none;">
 
     <img
-        id="previewImage"
-        alt="Aperçu photo">
+    id="previewImage"
+    alt="Aperçu photo"
+    hidden>
 
     <button id="removePhotoButton" style="display: none;">
         Retirer la photo
@@ -339,17 +338,7 @@
 
     </footer>
 
-    <!-- ===================================== -->
-    <!-- SUPABASE                              -->
-    <!-- ===================================== -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-    <!-- Script principal -->
-
-
-    <!-- PWA -->
-
+  <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="js/supabaseClient.js"></script>
 <script src="js/defis.js"></script>
