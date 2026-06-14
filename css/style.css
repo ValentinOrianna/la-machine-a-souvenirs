@@ -464,7 +464,9 @@ p {
     border-radius: 12px;
     color: #f2d49b;
     font-weight: bold;
-}#guestbookMessages div {
+}
+
+#guestbookMessages div {
     background: rgba(20, 10, 5, 0.75);
     border-radius: 12px;
     padding: 15px;
@@ -474,6 +476,7 @@ p {
 #guestbookMessages small {
     color: #c9b28d;
 }
+
 .photoCard {
     display: flex;
     flex-direction: column;
@@ -488,4 +491,24 @@ p {
 .likeButton:disabled {
     opacity: 0.8;
     cursor: not-allowed;
+}
+
+#quickNav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.navIcon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.buttonIcon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
 }
