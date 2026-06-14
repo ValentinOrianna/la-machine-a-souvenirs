@@ -518,4 +518,16 @@ p {
     align-items: center;
     justify-content: center;
     gap: 10px;
+}#uploadButton .buttonIcon {
+    width: 28px !important;
+    height: 28px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
+}
+
+#uploadButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
