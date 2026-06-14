@@ -57,12 +57,37 @@ if (participantCount) {
         else if (index === 1) medal = "🥈";
         else if (index === 2) medal = "🥉";
 
-        ligne.innerHTML = `
-            ${medal}
-            <strong>${joueur.prenom}</strong>
-            — ${joueur.photos} photo(s)
-        `;
+       const badge = obtenirBadge(joueur.photos);
+
+ligne.innerHTML = `
+    ${medal}
+    <strong>${joueur.prenom}</strong>
+    — ${joueur.photos} photo(s)
+
+    <br>
+
+    <small>${badge}</small>
+`;
 
         rankingList.appendChild(ligne);
     });
+}function obtenirBadge(nombrePhotos) {
+
+    if (nombrePhotos >= 50) {
+        return "👑 Légende du mariage";
+    }
+
+    if (nombrePhotos >= 25) {
+        return "🥇 Maître des souvenirs";
+    }
+
+    if (nombrePhotos >= 10) {
+        return "🥈 Aventurier";
+    }
+
+    if (nombrePhotos >= 5) {
+        return "🥉 Explorateur";
+    }
+
+    return "⚙️ Débutant";
 }
