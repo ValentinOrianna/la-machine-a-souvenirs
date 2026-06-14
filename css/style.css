@@ -575,3 +575,24 @@ p {
     padding: 10px;
     border-radius: 10px;
 }
+#galleryGrid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.photoCard img {
+    width: 100% !important;
+    max-width: 180px;
+}
+
+@media (max-width: 768px) {
+    #galleryGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .photoCard img {
+        width: 100% !important;
+        max-width: 150px;
+        margin: 5px !important;
+    }
+}
