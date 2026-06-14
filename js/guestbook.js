@@ -16,8 +16,6 @@ async function chargerLivreOr() {
 
     data.forEach(entree => {
 
-        console.log(entree);
-
         const bloc = document.createElement("div");
         const date = new Date(entree.created_at);
 
