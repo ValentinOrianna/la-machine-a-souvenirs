@@ -506,4 +506,16 @@ p {
     height: 24px;
     object-fit: contain;
     flex-shrink: 0;
+}#uploadButton .buttonIcon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+#uploadButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
