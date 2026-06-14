@@ -59,10 +59,7 @@ async function afficherPhotosSuivantes() {
         img.src = urlData.publicUrl;
         img.alt = "Photo souvenir";
 
-        img.style.width = "200px";
-        img.style.borderRadius = "12px";
-        img.style.margin = "10px";
-        img.style.cursor = "pointer";
+        img.className = "galleryPhoto";
 
         img.addEventListener("click", () => {
             ouvrirPhoto(urlData.publicUrl);

@@ -585,14 +585,25 @@ p {
 }
 
 @media (max-width: 768px) {
+
     #galleryGrid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        gap: 8px;
     }
 
     .photoCard img {
         width: 100% !important;
-        max-width: 150px;
-        margin: 5px !important;
+        max-width: 100px;
+        margin: 0 !important;
     }
+
+    .likeButton {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+}
+.galleryPhoto {
+    width: 100%;
+    border-radius: 12px;
+    cursor: pointer;
 }
