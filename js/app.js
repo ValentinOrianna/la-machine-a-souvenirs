@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const previewImage = document.getElementById("previewImage");
     const removePhotoButton = document.getElementById("removePhotoButton");
     const uploadButton = document.getElementById("uploadButton");
-    const playerNameInput = document.getElementById("playerName");const savedPlayerName = localStorage.getItem("playerName");
+    const playerNameInput = document.getElementById("playerName");
+    const savedPlayerName = localStorage.getItem("playerName");
 
 if (savedPlayerName) {
     playerNameInput.value = savedPlayerName;
@@ -28,11 +29,6 @@ if (savedPlayerName) {
 playerNameInput.addEventListener("input", () => {
     localStorage.setItem("playerName", playerNameInput.value.trim());
 });
-    const savedPlayerName = localStorage.getItem("playerName");
-
-if (savedPlayerName) {
-    playerNameInput.value = savedPlayerName;
-}
 
     const guestbookMessage = document.getElementById("guestbookMessage");
     const guestbookButton = document.getElementById("guestbookButton");
