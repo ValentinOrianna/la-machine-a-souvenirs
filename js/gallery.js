@@ -1,19 +1,51 @@
+let toutesLesPhotos = [];
+let photosAffichees = 0;
+const NOMBRE_PAR_PAGE = 10;
+
 async function chargerGalerie() {
 
     const galleryGrid = document.getElementById("galleryGrid");
-
     galleryGrid.innerHTML = "";
+
+    photosAffichees = 0;
 
     const { data, error } = await supabaseClient.storage
         .from("photo mariage")
-        .list("souvenirs");
+        .list("souvenirs", {
+            limit: 1000,
+            sortBy: {
+                column: "created_at",
+                order: "desc"
+            }
+        });
 
     if (error) {
         console.error("Erreur galerie :", error);
         return;
     }
 
-    for (const photo of data) {
+    toutesLesPhotos = data || [];
+
+    const photoCount = document.getElementById("photoCount");
+
+    if (photoCount) {
+        photoCount.textContent =
+            `📸 ${toutesLesPhotos.length} souvenirs capturés`;
+    }
+
+    afficherPhotosSuivantes();
+}
+
+function afficherPhotosSuivantes() {
+
+    const galleryGrid = document.getElementById("galleryGrid");
+
+    const photosAShow = toutesLesPhotos.slice(
+        photosAffichees,
+        photosAffichees + NOMBRE_PAR_PAGE
+    );
+
+    for (const photo of photosAShow) {
 
         const { data: urlData } = supabaseClient.storage
             .from("photo mariage")
@@ -35,12 +67,34 @@ async function chargerGalerie() {
 
         galleryGrid.appendChild(img);
     }
-    const photoCount = document.getElementById("photoCount");
 
-if (photoCount) {
-    photoCount.textContent =
-        `📸 ${data.length} souvenirs capturés`;
+    photosAffichees += photosAShow.length;
+
+    gererBoutonVoirPlus();
 }
+
+function gererBoutonVoirPlus() {
+
+    let bouton = document.getElementById("voirPlusPhotos");
+
+    if (bouton) {
+        bouton.remove();
+    }
+
+    if (photosAffichees >= toutesLesPhotos.length) {
+        return;
+    }
+
+    bouton = document.createElement("button");
+    bouton.id = "voirPlusPhotos";
+    bouton.textContent = "📸 Voir plus de photos";
+
+    bouton.addEventListener("click", () => {
+        afficherPhotosSuivantes();
+    });
+
+    const gallerySection = document.getElementById("gallerySection");
+    gallerySection.appendChild(bouton);
 }
 
 function ouvrirPhoto(url) {
