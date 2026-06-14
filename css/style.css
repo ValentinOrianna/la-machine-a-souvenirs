@@ -216,9 +216,9 @@ footer {
 }
 
 #coupleFrame {
-    width: 500px;
-    height: 500px;
-    margin: 40px auto;
+    width: 320px;
+    height: 320px;
+    margin: 20px auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -230,8 +230,8 @@ transform: translateY(20px);
 }
 
 #couplePhoto {
-    width: 360px;
-    height: 360px;
+    width: 220px;
+    height: 220px;
     object-fit: cover;
     border-radius: 50%;
     border: none;
