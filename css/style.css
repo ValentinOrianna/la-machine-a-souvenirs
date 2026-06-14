@@ -464,4 +464,13 @@ p {
     border-radius: 12px;
     color: #f2d49b;
     font-weight: bold;
+}#guestbookMessages div {
+    background: rgba(20, 10, 5, 0.75);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#guestbookMessages small {
+    color: #c9b28d;
 }
