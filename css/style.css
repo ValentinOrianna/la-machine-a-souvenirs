@@ -606,4 +606,15 @@ p {
     width: 100%;
     border-radius: 12px;
     cursor: pointer;
+}@media (max-width: 768px) {
+    #coupleFrame {
+        width: 320px;
+        height: 320px;
+        margin: 20px auto;
+    }
+
+    #couplePhoto {
+        width: 220px;
+        height: 220px;
+    }
 }
