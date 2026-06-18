@@ -1,4 +1,55 @@
 let envoiEnCours = false;
+async function compresserImage(file, maxWidth = 1920, quality = 0.8) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            img.src = event.target.result;
+        };
+
+        img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob(
+                (blob) => {
+                    if (!blob) {
+                        resolve(file);
+                        return;
+                    }
+
+                    const fichierCompresse = new File(
+                        [blob],
+                        file.name.replace(/\.[^/.]+$/, ".jpg"),
+                        { type: "image/jpeg" }
+                    );
+
+                    resolve(fichierCompresse);
+                },
+                "image/jpeg",
+                quality
+            );
+        };
+
+        reader.onerror = () => resolve(file);
+        img.onerror = () => resolve(file);
+
+        reader.readAsDataURL(file);
+    });
+}
 document.addEventListener("DOMContentLoaded", async () => {
 
     await chargerDefis();
@@ -115,12 +166,23 @@ uploadButtonText.textContent = "Envoi en cours...";
             return;
         }
 
-        const extension = file.name.split(".").pop();
-        const nomFichier = `souvenirs/photo-${Date.now()}.${extension}`;
+      if (uploadButtonText) {
+    uploadButtonText.textContent = "Compression de la photo...";
+}
 
-        const { error: uploadError } = await supabaseClient.storage
-            .from("photo mariage")
-            .upload(nomFichier, file);
+const fichierFinal = await compresserImage(file);
+
+const nomFichier = `souvenirs/photo-${Date.now()}.jpg`;
+
+if (uploadButtonText) {
+    uploadButtonText.textContent = "Envoi de la photo...";
+}
+
+const { error: uploadError } = await supabaseClient.storage
+    .from("photo mariage")
+    .upload(nomFichier, fichierFinal, {
+        contentType: "image/jpeg"
+    });
 
         if (uploadError) {
             console.error(uploadError);
