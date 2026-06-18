@@ -511,6 +511,18 @@ p {
     height: 48px;
     object-fit: contain;
 }
+#galleryButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#galleryButton .buttonIcon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
 
 .topPhotoCard {
     background: rgba(20, 10, 5, 0.75);
