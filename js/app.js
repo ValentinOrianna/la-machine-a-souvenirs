@@ -149,8 +149,10 @@ playerNameInput.addEventListener("input", () => {
 envoiEnCours = true;
 uploadButton.disabled = true;
 uploadButton.style.pointerEvents = "none";
-uploadButtonText.textContent = "Envoi en cours...";
-    
+
+if (uploadButtonText) {
+    uploadButtonText.textContent = "Préparation...";
+}
     try {
         const file = cameraInput.files[0] || galleryInput.files[0];
         const playerName = playerNameInput.value.trim();
@@ -241,7 +243,8 @@ const { error: uploadError } = await supabaseClient.storage
             return;
         }
 
-       await chargerGalerie();
+      await chargerGalerie();
+await chargerTopPhotos();
 await chargerClassement();
 
 cameraInput.value = "";
