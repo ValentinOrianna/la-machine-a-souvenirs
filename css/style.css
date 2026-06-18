@@ -499,31 +499,22 @@ p {
     max-width: 28px !important;
     max-height: 28px !important;
 }
-#cameraButton {
+#cameraButton,
+#galleryButton,
+#discoverButton {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 }
 
-#cameraButton .buttonIcon {
+#cameraButton .buttonIcon,
+#galleryButton .buttonIcon,
+#discoverButton .buttonIcon {
     width: 48px;
     height: 48px;
     object-fit: contain;
 }
-#galleryButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-#galleryButton .buttonIcon {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-}
-
 .topPhotoCard {
     background: rgba(20, 10, 5, 0.75);
     padding: 10px;
