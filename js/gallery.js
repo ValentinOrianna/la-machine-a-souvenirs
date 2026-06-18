@@ -1,6 +1,6 @@
 let toutesLesPhotos = [];
 let photosAffichees = 0;
-const NOMBRE_PAR_PAGE = 50;
+const NOMBRE_PAR_PAGE = 30;
 
 async function chargerGalerie() {
 
@@ -62,6 +62,8 @@ async function afficherPhotosSuivantes() {
         const img = document.createElement("img");
 
         img.src = urlData.publicUrl;
+        img.loading = "lazy";
+        img.decoding = "async";
         img.alt = "Photo souvenir";
 
         img.className = "galleryPhoto";
