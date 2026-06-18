@@ -53,19 +53,23 @@ playerNameInput.addEventListener("input", () => {
         challengeText.textContent = defi.texte;
     });
 
-    function afficherPreview(file) {
-        if (!file) {
-            previewImage.src = "";
-            previewImage.removeAttribute("src");
-            removePhotoButton.style.display = "none";
-            return;
-        }
+   function afficherPreview(file) {
 
-        const imageUrl = URL.createObjectURL(file);
-
-        previewImage.src = imageUrl;
-        removePhotoButton.style.display = "inline-block";
+    if (!file) {
+        previewImage.src = "";
+        previewImage.removeAttribute("src");
+        previewImage.hidden = true;
+        removePhotoButton.style.display = "none";
+        return;
     }
+
+    const imageUrl = URL.createObjectURL(file);
+
+    previewImage.src = imageUrl;
+    previewImage.hidden = false;
+
+    removePhotoButton.style.display = "inline-block";
+}
 
     cameraInput.addEventListener("change", () => {
         afficherPreview(cameraInput.files[0]);
@@ -81,6 +85,7 @@ playerNameInput.addEventListener("input", () => {
 
         previewImage.src = "";
         previewImage.removeAttribute("src");
+        previewImage.hidden = true;
         removePhotoButton.style.display = "none";
     });
 
@@ -183,6 +188,7 @@ galleryInput.value = "";
 previewImage.src = "";
 previewImage.removeAttribute("src");
 removePhotoButton.style.display = "none";
+previewImage.hidden = true;
 
 
     } finally {
