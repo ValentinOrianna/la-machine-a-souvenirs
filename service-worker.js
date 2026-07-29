@@ -28,9 +28,22 @@ const FILES_TO_CACHE = [
     "./assets/icons/galerie.png",
     "./assets/icons/trophe.png",
     "./assets/icons/book.png",
-    "./assets/icons/setting.png",
-    "./assets/icons/close.png"
-];
+"./assets/icons/setting.png",
+"./assets/icons/close.png",
+
+"./assets/smoke/smoke1.png",
+"./assets/smoke/smoke2.png",
+"./assets/smoke/smoke3.png",
+
+"./assets/gears/gear-small1.png",
+"./assets/gears/gear-small2.png",
+"./assets/gears/gear-medium.png",
+"./assets/gears/gear-large.png",
+
+"./assets/img/couple.jpg",
+
+"./assets/pwa/icon144.png",
+"./assets/pwa/icon192.png",
 
 
 self.addEventListener("install", (event) => {
@@ -72,6 +85,11 @@ self.addEventListener("fetch", (event) => {
         .then((cachedFile) => {
 
             return cachedFile || fetch(event.request);
+
+        })
+        .catch(() => {
+
+            return caches.match("./index.html");
 
         })
 
