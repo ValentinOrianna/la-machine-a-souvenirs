@@ -21,12 +21,14 @@ const FILES_TO_CACHE = [
   "./assets/background/background.png",
   "./assets/ui/frame.png",
 
-  "./assets/icons/camera.png",
-  "./assets/icons/send.png",
-  "./assets/icons/trophy.png",
-  "./assets/icons/book.png",
-  "./assets/icons/setting.png",
-  "./assets/icons/close.png"
+ "./assets/icons/camera.png",
+"./assets/icons/send.png",
+"./assets/icons/defis.png",
+"./assets/icons/galerie.png",
+"./assets/icons/trophe.png",
+"./assets/icons/book.png",
+"./assets/icons/setting.png",
+"./assets/icons/close.png"
 ];
 
 self.addEventListener("install", (event) => {
