@@ -86,30 +86,118 @@ async function afficherPhotosSuivantes() {
         likeButton.disabled = !!dejaLike;
         await chargerTopPhotos();
 
-        likeButton.addEventListener("click", async () => {
+     likeButton.addEventListener("click", async () => {
 
-            if (localStorage.getItem(`like-${photo.name}`)) {
-                return;
-            }
 
-            const { error } = await supabaseClient
-                .from("likes")
-                .insert({
-                    photo_name: photo.name
-                });
+    if (localStorage.getItem(`like-${photo.name}`)) {
 
-            if (error) {
-                console.error(error);
-                alert("Erreur lors du like.");
-                return;
-            }
+        return;
 
-            localStorage.setItem(`like-${photo.name}`, "true");
+    }
 
-            const nouveauTotal = await compterLikes(photo.name);
-            likeButton.textContent = `❤️ ${nouveauTotal}`;
-            likeButton.disabled = true;
+
+
+    const likeData = {
+
+        id: genererIdOffline("like"),
+
+        photo_name: photo.name,
+
+        date: new Date().toISOString(),
+
+        status: "pending"
+
+    };
+
+
+
+
+    // MODE HORS LIGNE
+
+    if (!navigator.onLine) {
+
+
+        await ajouterOffline(
+            STORES.LIKES,
+            likeData
+        );
+
+
+        localStorage.setItem(
+            `like-${photo.name}`,
+            "true"
+        );
+
+
+        const nouveauTotal = await compterLikes(photo.name);
+
+
+        likeButton.textContent =
+            `❤️ ${nouveauTotal + 1}`;
+
+
+        likeButton.disabled = true;
+
+
+
+        console.log(
+            "❤️ Like sauvegardé hors ligne",
+            likeData
+        );
+
+
+        return;
+
+    }
+
+
+
+
+    // MODE EN LIGNE
+
+    const { error } = await supabaseClient
+        .from("likes")
+        .insert({
+
+            photo_name: photo.name
+
         });
+
+
+
+    if (error) {
+
+
+        console.error(error);
+
+        alert(
+            "Erreur lors du like."
+        );
+
+        return;
+
+    }
+
+
+
+    localStorage.setItem(
+        `like-${photo.name}`,
+        "true"
+    );
+
+
+    const nouveauTotal =
+        await compterLikes(photo.name);
+
+
+    likeButton.textContent =
+        `❤️ ${nouveauTotal}`;
+
+
+    likeButton.disabled = true;
+
+
+});
 
         carte.appendChild(img);
         carte.appendChild(likeButton);
