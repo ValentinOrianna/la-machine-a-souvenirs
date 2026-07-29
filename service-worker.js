@@ -1,9 +1,10 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v19";
+const CACHE_NAME = "la-machine-a-souvenirs-v20";
 
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
     "./manifest.json",
+    "./data/defis.json",
 
     "./css/style.css",
     "./css/steampunk.css",
