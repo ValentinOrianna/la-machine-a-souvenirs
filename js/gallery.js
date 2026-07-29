@@ -212,20 +212,76 @@ async function afficherPhotosSuivantes() {
 
 async function compterLikes(photoName) {
 
-    const { count, error } = await supabaseClient
-        .from("likes")
-        .select("*", {
-            count: "exact",
-            head: true
-        })
-        .eq("photo_name", photoName);
 
-    if (error) {
-        console.error(error);
-        return 0;
+    let total = 0;
+
+
+
+    // Likes déjà présents dans Supabase
+
+    if (navigator.onLine) {
+
+
+        const { count, error } = await supabaseClient
+            .from("likes")
+            .select("*", {
+                count: "exact",
+                head: true
+            })
+            .eq("photo_name", photoName);
+
+
+
+        if (!error) {
+
+            total = count || 0;
+
+        } else {
+
+            console.error(error);
+
+        }
+
+
     }
 
-    return count || 0;
+
+
+    // Likes en attente dans IndexedDB
+
+    try {
+
+
+        const likesOffline = await recupererOffline(
+            STORES.LIKES
+        );
+
+
+        const likesEnAttente = likesOffline.filter(
+            like =>
+                like.photo_name === photoName
+        );
+
+
+        total += likesEnAttente.length;
+
+
+
+    } catch(error) {
+
+
+        console.error(
+            "Erreur lecture likes offline",
+            error
+        );
+
+
+    }
+
+
+
+    return total;
+
 }
 
 function gererBoutonVoirPlus() {
