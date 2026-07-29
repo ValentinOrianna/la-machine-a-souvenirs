@@ -1,4 +1,4 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v23";
+const CACHE_NAME = "la-machine-a-souvenirs-v24";
 
 const FILES_TO_CACHE = [
     "./",
@@ -90,7 +90,7 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => {
 
-            return caches.match("./index.html");
+          
 
         })
 
