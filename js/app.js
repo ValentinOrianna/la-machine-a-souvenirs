@@ -179,13 +179,22 @@ const nomFichier = `souvenirs/photo-${Date.now()}.jpg`;
 if (!navigator.onLine) {
 
     const photoEnAttente = {
-        id: genererIdOffline("photo"),
-        name: nomFichier,
-        file: fichierFinal,
-        prenom: playerName,
-        date: new Date().toISOString(),
-        status: "pending"
-    };
+
+    id: genererIdOffline("photo"),
+
+    name: nomFichier,
+
+    file: fichierFinal,
+
+    prenom: playerName,
+
+    signature: creerSignaturePhoto(file),
+
+    date: new Date().toISOString(),
+
+    status: "pending"
+
+};
 
 
     await ajouterOffline(

@@ -90,41 +90,105 @@ async function ajouterOffline(type, element) {
         const store = transaction.objectStore(type);
 
 
-        const request = store.add(element);
+        const request = store.getAll();
 
 
         request.onsuccess = () => {
 
-            console.log(
-                "💾 Ajout IndexedDB réussi",
-                element
+
+            const existants = request.result;
+
+
+            const doublon = existants.find(
+                item =>
+                    item.signature &&
+                    item.signature === element.signature
             );
 
+
+            if (doublon) {
+
+
+                console.log(
+                    "⚠️ Élément déjà présent dans IndexedDB",
+                    doublon
+                );
+
+
+                resolve(false);
+
+                return;
+
+            }
+
+
+
+            const ajout = store.add(element);
+
+
+
+            ajout.onsuccess = () => {
+
+
+                console.log(
+                    "💾 Ajout IndexedDB réussi",
+                    element
+                );
+
+
+            };
+
+
+            ajout.onerror = () => {
+
+
+                console.error(
+                    "❌ Erreur ajout IndexedDB",
+                    ajout.error
+                );
+
+
+                reject(ajout.error);
+
+
+            };
+
+
         };
+
 
 
         request.onerror = () => {
 
+
             console.error(
-                "❌ Erreur ajout IndexedDB",
+                "❌ Erreur lecture IndexedDB",
                 request.error
             );
 
+
             reject(request.error);
 
+
         };
+
 
 
         transaction.oncomplete = () => {
 
+
             resolve(true);
+
 
         };
 
 
+
         transaction.onerror = () => {
 
+
             reject(transaction.error);
+
 
         };
 
@@ -223,5 +287,13 @@ function genererIdOffline(prefix = "item") {
     return `${prefix}-${Date.now()}-${Math.random()
         .toString(36)
         .substring(2, 9)}`;
+
+}function creerSignaturePhoto(file) {
+
+    return `${file.name}-${file.size}-${file.lastModified}`;
+
+}function creerSignaturePhoto(file) {
+
+    return `${file.name}-${file.size}-${file.lastModified}`;
 
 }
