@@ -1,4 +1,4 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v22";
+const CACHE_NAME = "la-machine-a-souvenirs-v23";
 
 const FILES_TO_CACHE = [
     "./",
@@ -43,7 +43,8 @@ const FILES_TO_CACHE = [
 "./assets/img/couple.jpg",
 
 "./assets/pwa/icon144.png",
-"./assets/pwa/icon192.png"
+"./assets/pwa/icon192.png",
+"./js/vendor/supabase-js.min.js",
 
 ];
 self.addEventListener("install", (event) => {
