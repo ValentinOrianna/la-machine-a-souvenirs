@@ -216,6 +216,105 @@ async function synchroniserPhotosHorsLigne() {
 
 }
 
+async function synchroniserLikesHorsLigne() {
+
+
+    if (!navigator.onLine) {
+
+        console.log(
+            "⚙️ Pas de connexion, synchronisation likes impossible"
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "❤️ Début synchronisation des likes..."
+    );
+
+
+    const likesEnAttente = await recupererOffline(
+        STORES.LIKES
+    );
+
+
+    if (!likesEnAttente.length) {
+
+        console.log(
+            "❤️ Aucun like en attente"
+        );
+
+        return;
+
+    }
+
+
+
+    for (const like of likesEnAttente) {
+
+
+        try {
+
+
+            const { error } =
+                await supabaseClient
+                .from("likes")
+                .insert({
+
+                    photo_name: like.photo_name
+
+                });
+
+
+
+            if (error) {
+
+                console.error(
+                    "Erreur synchronisation like",
+                    error
+                );
+
+                continue;
+
+            }
+
+
+
+            await supprimerOffline(
+                STORES.LIKES,
+                like.id
+            );
+
+
+            console.log(
+                "✅ Like synchronisé :",
+                like.photo_name
+            );
+
+
+        } catch(error) {
+
+
+            console.error(
+                "Erreur synchronisation like",
+                error
+            );
+
+
+        }
+
+
+    }
+
+
+    console.log(
+        "❤️ Synchronisation likes terminée"
+    );
+
+}
+
 
 
 
@@ -225,27 +324,24 @@ window.addEventListener(
     "online",
     () => {
 
-
         console.log(
             "🌐 Connexion retrouvée"
         );
 
-
         synchroniserPhotosHorsLigne();
 
+        synchroniserLikesHorsLigne();
 
     }
 );
-
-
 
 
 // Vérification au lancement
 
 if (navigator.onLine) {
 
-
     synchroniserPhotosHorsLigne();
 
+    synchroniserLikesHorsLigne();
 
 }
