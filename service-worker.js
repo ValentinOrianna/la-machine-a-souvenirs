@@ -1,4 +1,4 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v21";
+const CACHE_NAME = "la-machine-a-souvenirs-v22";
 
 const FILES_TO_CACHE = [
     "./",
@@ -43,9 +43,9 @@ const FILES_TO_CACHE = [
 "./assets/img/couple.jpg",
 
 "./assets/pwa/icon144.png",
-"./assets/pwa/icon192.png",
+"./assets/pwa/icon192.png"
 
-
+];
 self.addEventListener("install", (event) => {
 
     self.skipWaiting();
