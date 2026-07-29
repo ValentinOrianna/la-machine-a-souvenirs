@@ -175,6 +175,43 @@ if (uploadButtonText) {
 const fichierFinal = await compresserImage(file);
 
 const nomFichier = `souvenirs/photo-${Date.now()}.jpg`;
+// Vérification connexion
+if (!navigator.onLine) {
+
+    const photoEnAttente = {
+        id: genererIdOffline("photo"),
+        name: nomFichier,
+        file: fichierFinal,
+        prenom: playerName,
+        date: new Date().toISOString(),
+        status: "pending"
+    };
+
+
+    await ajouterOffline(
+        STORES.PHOTOS,
+        photoEnAttente
+    );
+
+
+    console.log(
+        "📸 Photo sauvegardée hors ligne",
+        photoEnAttente
+    );
+
+
+    if (uploadButtonText) {
+        uploadButtonText.textContent = "Photo en attente de connexion ⚙️";
+    }
+
+
+    alert(
+        "⚙️ La Machine a gardé votre souvenir.\n\nLa photo sera envoyée automatiquement dès que la connexion reviendra."
+    );
+
+
+    return;
+}
 
 if (uploadButtonText) {
     uploadButtonText.textContent = "Envoi de la photo...";
