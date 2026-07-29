@@ -90,7 +90,29 @@ async function ajouterOffline(type, element) {
         const store = transaction.objectStore(type);
 
 
-        store.add(element);
+        const request = store.add(element);
+
+
+        request.onsuccess = () => {
+
+            console.log(
+                "💾 Ajout IndexedDB réussi",
+                element
+            );
+
+        };
+
+
+        request.onerror = () => {
+
+            console.error(
+                "❌ Erreur ajout IndexedDB",
+                request.error
+            );
+
+            reject(request.error);
+
+        };
 
 
         transaction.oncomplete = () => {
