@@ -575,17 +575,30 @@ async function supprimerPhotoAdmin(
     }
 
 
+console.log(
+    "Tentative suppression photo :",
+    photoId
+);
+   console.log(
+    "Tentative suppression photo :",
+    photoId
+);
 
-    const { error } =
-        await supabaseClient
-        .from("photos")
-        .delete()
-        .eq(
-            "id",
-            photoId
-        );
+
+const { error } =
+    await supabaseClient
+    .from("photos")
+    .delete()
+    .eq(
+        "id",
+        photoId
+    );
 
 
+console.log(
+    "Résultat suppression :",
+    error
+);
 
     if (error) {
 
