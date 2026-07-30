@@ -52,12 +52,15 @@ async function compresserImage(file, maxWidth = 1920, quality = 0.8) {
 }
 document.addEventListener("DOMContentLoaded", async () => {
 
-    await chargerDefis();
+     await chargerDefis();
     await chargerTopPhotos();
     await chargerGalerie();
     await chargerClassement();
     await chargerLivreOr();
+
     await afficherElementsEnAttente();
+
+    afficherEtatReseau();
 
     const button = document.getElementById("discoverButton");
     const challengeText = document.getElementById("challengeText");

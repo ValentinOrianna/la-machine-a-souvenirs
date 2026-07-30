@@ -1,4 +1,4 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v29";
+const CACHE_NAME = "la-machine-a-souvenirs-v30";
 
 
 const FILES_TO_CACHE = [
@@ -26,6 +26,8 @@ const FILES_TO_CACHE = [
     "./js/vendor/supabase-js.min.js",
     "./js/offlineDB.js",
     "./js/syncManager.js",
+    "./js/offlineStatus.js",
+    "./js/networkStatus.js",
 
 
     // Images principales
