@@ -17,7 +17,7 @@ if (!galleryGrid) {
     const { data, error } = await supabaseClient.storage
         .from("photo mariage")
         .list("souvenirs", {
-            limit: 1000,
+            limit: 3000,
             sortBy: {
                 column: "created_at",
                 order: "desc"
@@ -28,6 +28,10 @@ if (!galleryGrid) {
         console.error("Erreur galerie :", error);
         return;
     }
+    console.log(
+    "Fichiers Storage trouvés :",
+    data
+);
 
     toutesLesPhotos = data || [];
 

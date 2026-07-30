@@ -696,6 +696,10 @@ if (zone) {
 
     zone.innerHTML = "";
 
+    await voirPhotosParticipant(
+        participantId
+    );
+
 }
 
 
