@@ -175,26 +175,21 @@ if (uploadButtonText) {
 const fichierFinal = await compresserImage(file);
 
 const nomFichier = `souvenirs/photo-${Date.now()}.jpg`;
+
 // Vérification connexion
 if (!navigator.onLine) {
 
     const photoEnAttente = {
 
-    id: genererIdOffline("photo"),
+        id: genererIdOffline("photo"),
+        name: nomFichier,
+        file: fichierFinal,
+        prenom: playerName,
+        signature: creerSignaturePhoto(file),
+        date: new Date().toISOString(),
+        status: "pending"
 
-    name: nomFichier,
-
-    file: fichierFinal,
-
-    prenom: playerName,
-
-    signature: creerSignaturePhoto(file),
-
-    date: new Date().toISOString(),
-
-    status: "pending"
-
-};
+    };
 
 
     await ajouterOffline(
@@ -210,13 +205,25 @@ if (!navigator.onLine) {
 
 
     if (uploadButtonText) {
-        uploadButtonText.textContent = "Photo en attente de connexion ⚙️";
+        uploadButtonText.textContent =
+            "Photo en attente de connexion ⚙️";
     }
 
 
     alert(
         "⚙️ La Machine a gardé votre souvenir.\n\nLa photo sera envoyée automatiquement dès que la connexion reviendra."
     );
+
+
+    cameraInput.value = "";
+    galleryInput.value = "";
+
+    previewImage.src = "";
+    previewImage.removeAttribute("src");
+
+    removePhotoButton.style.display = "none";
+
+    previewImage.hidden = true;
 
 
     return;
@@ -302,14 +309,22 @@ removePhotoButton.style.display = "none";
 previewImage.hidden = true;
 
 
-    } finally {
-    envoiEnCours = false;
-    uploadButton.disabled = false;
-    uploadButton.style.pointerEvents = "auto";
-    uploadButtonText.textContent = "Envoyer à la Machine à Souvenirs";
+   } finally {
 
-        
+    envoiEnCours = false;
+
+    if (uploadButton) {
+        uploadButton.disabled = false;
+        uploadButton.style.pointerEvents = "auto";
     }
+
+
+    if (uploadButtonText) {
+        uploadButtonText.textContent =
+            "Envoyer à la Machine à Souvenirs";
+    }
+
+}
 
 });
      let messageEnCours = false;
