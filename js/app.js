@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await chargerGalerie();
     await chargerClassement();
     await chargerLivreOr();
+    await afficherElementsEnAttente();
 
     const button = document.getElementById("discoverButton");
     const challengeText = document.getElementById("challengeText");
@@ -309,7 +310,9 @@ removePhotoButton.style.display = "none";
 previewImage.hidden = true;
 
 
-   } finally {
+} finally {
+
+    console.log("🔓 FIN ENVOI PHOTO");
 
     envoiEnCours = false;
 
@@ -318,10 +321,9 @@ previewImage.hidden = true;
         uploadButton.style.pointerEvents = "auto";
     }
 
-
     if (uploadButtonText) {
         uploadButtonText.textContent =
-            "Envoyer à la Machine à Souvenirs";
+        "Envoyer à la Machine à Souvenirs";
     }
 
 }
