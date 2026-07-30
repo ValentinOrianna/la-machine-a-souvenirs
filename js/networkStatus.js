@@ -1,3 +1,6 @@
+console.log("✅ networkStatus.js chargé");
+
+
 function afficherEtatReseau() {
 
     const zone = document.getElementById(
