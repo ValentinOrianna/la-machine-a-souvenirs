@@ -129,5 +129,86 @@ loginBox.style.display =
 adminPanel.style.display =
     "block";
 
+
+await chargerParticipantsAdmin();
+
     }
 );
+
+async function chargerParticipantsAdmin() {
+
+
+    const zone =
+        document.getElementById(
+            "adminParticipantsList"
+        );
+
+
+    if (!zone) {
+        return;
+    }
+
+
+    const { data, error } =
+        await supabaseClient
+        .from("participants")
+        .select("*")
+        .order(
+            "prenom",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        zone.textContent =
+            "❌ Erreur chargement participants";
+
+        return;
+
+    }
+
+
+    zone.innerHTML = "";
+
+
+    if (!data.length) {
+
+        zone.textContent =
+            "Aucun participant";
+
+        return;
+
+    }
+
+
+
+    data.forEach(participant => {
+
+
+        const ligne =
+            document.createElement("div");
+
+
+        ligne.textContent =
+            `👤 ${participant.prenom}`;
+
+
+        zone.appendChild(ligne);
+
+
+    });
+
+
+
+    console.log(
+        "✅ Participants chargés",
+        data
+    );
+
+
+}
