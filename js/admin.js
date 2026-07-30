@@ -607,11 +607,13 @@ async function supprimerPhotoAdmin(
 
     // récupérer le chemin Storage
 
-    const chemin =
+const chemin =
+    decodeURIComponent(
         photo.image_url
-        .split(
-            "/photo mariage/"
-        )[1];
+    )
+    .split(
+        "/photo mariage/"
+    )[1];
 
 
 
