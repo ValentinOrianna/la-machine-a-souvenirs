@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Administration - La Machine à Souvenirs</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+<main id="adminApp">
+
+
+<h1>
+⚙️ Administration
+</h1>
+
+
+<div id="loginBox">
+
+
+<input 
+type="email"
+id="adminEmail"
+placeholder="Email administrateur">
+
+
+<input 
+type="password"
+id="adminPassword"
+placeholder="Mot de passe">
+
+
+<button id="loginButton">
+Connexion
+</button>
+
+
+<p id="loginMessage"></p>
+
+
+</div>
+
+
+
+<div id="adminPanel" style="display:none;">
+
+<h2>
+Bienvenue administrateur
+</h2>
+
+<p>
+Accès autorisé
+</p>
+
+
+</div>
+
+
+
+</main>
+
+
+
+<script src="js/vendor/supabase-js.min.js"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/admin.js"></script>
+
+
+</body>
+
+</html>
