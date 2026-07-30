@@ -10,8 +10,12 @@ async function afficherElementsEnAttente() {
 
 
     const messages =
-        await recupererOffline(STORES.MESSAGES);
+    await recupererOffline(STORES.MESSAGES);
 
+
+console.log("OFFLINE PHOTOS", photos);
+console.log("OFFLINE LIKES", likes);
+console.log("OFFLINE MESSAGES", messages);
 
 
     const zone =
