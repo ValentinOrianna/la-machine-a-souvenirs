@@ -25,14 +25,15 @@
 
     border-radius: 10px;
 
-}.adminPhotoGrid {
+}
 
-    display: grid;
 
-    grid-template-columns: repeat(2, 1fr);
+.adminPhotoGrid img {
 
-    gap: 10px;
+    width: 100%;
 
-    background: red;
+    height: auto;
+
+    border-radius: 10px;
 
 }
