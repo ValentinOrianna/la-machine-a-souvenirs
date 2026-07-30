@@ -121,7 +121,8 @@ async function afficherPhotosSuivantes() {
             STORES.LIKES,
             likeData
         );
-
+        
+await afficherElementsEnAttente();
 
         localStorage.setItem(
             `like-${photo.name}`,

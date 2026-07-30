@@ -196,16 +196,19 @@ if (!navigator.onLine) {
     };
 
 
-    await ajouterOffline(
-        STORES.PHOTOS,
-        photoEnAttente
-    );
+   await ajouterOffline(
+    STORES.PHOTOS,
+    photoEnAttente
+);
 
 
-    console.log(
-        "📸 Photo sauvegardée hors ligne",
-        photoEnAttente
-    );
+await afficherElementsEnAttente();
+
+
+console.log(
+    "📸 Photo sauvegardée hors ligne",
+    photoEnAttente
+);
 
 
     if (uploadButtonText) {
@@ -383,6 +386,7 @@ guestbookButton.addEventListener("click", async () => {
         messageEnAttente
     );
 
+    await afficherElementsEnAttente();
 
     console.log(
         "📖 Message sauvegardé hors ligne",
