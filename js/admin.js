@@ -634,6 +634,28 @@ async function supprimerPhotoAdmin(
             chemin
         ]);
 
+// supprimer table photos
+
+const { error: deleteError } =
+    await supabaseClient
+    .from("photos")
+    .delete()
+    .eq(
+        "id",
+        photoId
+    );
+
+
+if (deleteError) {
+
+    console.error(
+        "Erreur suppression base :",
+        deleteError
+    );
+
+    return;
+
+}
 
 
     if (storageError) {
@@ -647,130 +669,24 @@ async function supprimerPhotoAdmin(
 
     }
 
+// rafraîchir affichage admin
 
-
-    // suppression base de données
-
-   // récupérer le chemin de la photo
-
-const { data: photo, error: photoError } =
-    await supabaseClient
-    .from("photos")
-    .select("image_url")
-    .eq(
-        "id",
-        photoId
-    )
-    .single();
-
-
-
-if (photoError) {
-
-    console.error(photoError);
-
-    return;
-
-}
-
-
-
-console.log(
-    "Photo trouvée :",
-    photo.image_url
-);
-
-
-
-// extraire le chemin Storage
-
-const chemin =
-    photo.image_url.split(
-        "/photo mariage/"
-    )[1];
-
-
-
-console.log(
-    "Chemin Storage :",
-    chemin
-);
-
-
-
-// supprimer le fichier image
-
-const { error: storageError } =
-    await supabaseClient
-    .storage
-    .from(
-        "photo mariage"
-    )
-    .remove([
-        chemin
-    ]);
-
-
-
-if (storageError) {
-
-    console.error(
-        "Erreur Storage :",
-        storageError
-    );
-
-    return;
-
-}
-
-
-
-// supprimer la ligne SQL
-
-const { error } =
-    await supabaseClient
-    .from("photos")
-    .delete()
-    .eq(
-        "id",
-        photoId
-    );
-
-
-console.log(
-    "Résultat suppression SQL :",
-    error
-);
-
-
-
-if (error) {
-
-    console.error(error);
-
-    alert(
-        "Erreur suppression"
-    );
-
-    return;
-
-}
-  const zone =
+const zone =
     document.getElementById(
         `photos-${participantId}`
     );
 
 
-zone.innerHTML = "";
+if (zone) {
 
-await voirPhotosParticipant(
-    participantId
-);
+    zone.innerHTML = "";
+
+}
 
 
-    await chargerStatsAdmin();
+await chargerStatsAdmin();
 
-    await chargerParticipantsAdmin();
+await chargerParticipantsAdmin();
 
 
 }
