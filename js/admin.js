@@ -69,25 +69,19 @@ loginButton.addEventListener(
 
 
         const user =
-            data.user;
+    data.user;
 
-            console.log(
-           "Utilisateur connecté :",
-            user.email
+
+console.log(
+    "Utilisateur connecté :",
+    user.email
 );
 
 
-        const { data: admin, error: adminError } =
-            await supabaseClient
-            .from("admins")
-            .select("*")
-            .eq(
-                "email",
-                user.email
-            )
-            .maybeSingle(
- );
-
+const { data: admins, error: adminError } =
+    await supabaseClient
+    .from("admins")
+    .select("*");
 
 
 console.log(
@@ -97,56 +91,37 @@ console.log(
 
 
 console.log(
-    "Recherche admin avec :",
-    user.email
+    "Toutes les lignes admins :",
+    admins
 );
 
 
-const { data: admin, error: adminError } =
-    await supabaseClient
-    .from("admins")
-    .select("*")
-    .ilike(
-        "email",
-        user.email.trim()
-    )
-    .maybeSingle();
+if (adminError || !admins || admins.length === 0) {
+
+    console.error(adminError);
+
+    await supabaseClient.auth.signOut();
+
+    loginMessage.textContent =
+        "❌ Accès administrateur refusé";
+
+    return;
+
+}
 
 
-
-if (adminError || !admin) {
-
-
-            console.error(adminError);
-
-
-            await supabaseClient.auth.signOut();
+console.log(
+    "✅ Administrateur connecté",
+    admins
+);
 
 
-            loginMessage.textContent =
-                "❌ Accès administrateur refusé";
+loginBox.style.display =
+    "none";
 
 
-            return;
-
-        }
-
-
-
-        console.log(
-            "✅ Administrateur connecté",
-            admin
-        );
-
-
-
-        loginBox.style.display =
-            "none";
-
-
-        adminPanel.style.display =
-            "block";
-
+adminPanel.style.display =
+    "block";
 
     }
 );
