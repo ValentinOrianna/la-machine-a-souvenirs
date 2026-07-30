@@ -85,14 +85,20 @@ const { data: admins, error: adminError } =
 
 
 console.log(
-    "Utilisateur Auth :",
-    user.email
+    "ERREUR ADMINS :",
+    adminError
 );
 
 
 console.log(
-    "Toutes les lignes admins :",
+    "RESULTAT ADMINS :",
     admins
+);
+
+
+console.log(
+    "Utilisateur Auth :",
+    user.email
 );
 
 
