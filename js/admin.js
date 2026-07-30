@@ -524,18 +524,89 @@ async function chargerStatsAdmin() {
 
 
 
-    data.forEach(photo => {
+  data.forEach(photo => {
 
 
-        grille.innerHTML += `
+    grille.innerHTML += `
+
+    <div class="adminPhotoCard">
+
 
         <img
         src="${photo.image_url}">
 
-        `;
+
+        <button
+        class="deletePhotoButton"
+        onclick="supprimerPhotoAdmin('${photo.id}', '${id}')">
+
+        🗑️
+
+        </button>
 
 
-    });
+    </div>
+
+    `;
+
+
+});
+
+
+}
+async function supprimerPhotoAdmin(
+    photoId,
+    participantId
+) {
+
+
+    const confirmation =
+        confirm(
+            "Supprimer cette photo ?"
+        );
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+
+    const { error } =
+        await supabaseClient
+        .from("photos")
+        .delete()
+        .eq(
+            "id",
+            photoId
+        );
+
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erreur suppression"
+        );
+
+        return;
+
+    }
+
+
+
+    await voirPhotosParticipant(
+        participantId
+    );
+
+
+    await chargerStatsAdmin();
+
+    await chargerParticipantsAdmin();
 
 
 }

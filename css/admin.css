@@ -32,3 +32,38 @@
     max-width: 500px;
 
 }
+
+.adminPhotoCard {
+
+    position: relative;
+
+}
+
+
+.adminPhotoCard img {
+
+    width: 100%;
+
+    height: 180px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+}
+
+
+
+.deletePhotoButton {
+
+    position: absolute;
+
+    top: 5px;
+
+    right: 5px;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+}
