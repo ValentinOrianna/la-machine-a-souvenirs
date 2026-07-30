@@ -569,20 +569,36 @@ async function supprimerPhotoAdmin(
 
 
     if (!confirmation) {
-
         return;
-
     }
 
 
-console.log(
-    "Tentative suppression photo :",
-    photoId
-);
-   console.log(
-    "Tentative suppression photo :",
-    photoId
-);
+    console.log(
+        "ID PHOTO A SUPPRIMER :",
+        photoId
+    );
+
+
+    const { data, error } =
+        await supabaseClient
+        .from("photos")
+        .delete()
+        .eq(
+            "id",
+            photoId
+        )
+        .select();
+
+
+
+    console.log(
+        "REPONSE DELETE :",
+        data,
+        error
+    );
+
+
+}
 
 
 const { error } =
