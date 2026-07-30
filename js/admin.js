@@ -342,18 +342,21 @@ ${participant.messages}
 
 <br>
 
-<button 
+<button
 onclick="voirPhotosParticipant('${participant.id}')">
 
-📸 Voir ses photos
+📸 Voir
 
 </button>
+
+
+<div id="photos-${participant.id}"></div>
 
 
 <button 
 onclick="voirMessagesParticipant('${participant.prenom}')">
 
-📖 Voir ses messages
+📖 Voir
 
 </button>
 
@@ -453,13 +456,29 @@ async function chargerStatsAdmin() {
 
 
 }
-async function voirPhotosParticipant(id) {
+  async function voirPhotosParticipant(id) {
 
 
     const zone =
         document.getElementById(
-            "adminDetails"
+            `photos-${id}`
         );
+
+
+    if (!zone) {
+        return;
+    }
+
+
+    // Si déjà ouverte → on ferme
+    if (zone.innerHTML !== "") {
+
+        zone.innerHTML = "";
+
+        return;
+
+    }
+
 
 
     const { data, error } =
@@ -472,6 +491,7 @@ async function voirPhotosParticipant(id) {
         );
 
 
+
     if (error) {
 
         console.error(error);
@@ -480,6 +500,37 @@ async function voirPhotosParticipant(id) {
 
     }
 
+
+
+    zone.innerHTML = `
+
+    <div class="adminPhotoGrid">
+
+    </div>
+
+    `;
+
+
+
+    const grille =
+        zone.querySelector(
+            ".adminPhotoGrid"
+        );
+
+
+
+    data.forEach(photo => {
+
+
+        grille.innerHTML += `
+
+        <img
+        src="${photo.image_url}">
+
+        `;
+
+
+    });
 
     zone.innerHTML = `
 
