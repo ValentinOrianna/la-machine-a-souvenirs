@@ -639,7 +639,7 @@ console.log(
 
 // suppression fichier Storage
 
-const { error: storageError } =
+const { data: storageData, error: storageError } =
     await supabaseClient
     .storage
     .from(
@@ -649,26 +649,31 @@ const { error: storageError } =
         chemin
     ]);
 
-    console.log(
+
+console.log(
     "Suppression Storage demandée :",
     chemin
 );
 
+
 console.log(
-    "Résultat suppression Storage :",
+    "Retour suppression Storage :",
+    storageData,
     storageError
 );
 
-    if (storageError) {
 
-        console.error(
-            "Erreur Storage :",
-            storageError
-        );
 
-        return;
+if (storageError) {
 
-    }
+    console.error(
+        "Erreur Storage :",
+        storageError
+    );
+
+    return;
+
+}
 
 // rafraîchir affichage admin
 
