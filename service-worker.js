@@ -1,10 +1,11 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v30";
+const CACHE_NAME = "la-machine-a-souvenirs-v31";
 
 
 const FILES_TO_CACHE = [
 
     "./",
     "./index.html",
+    "./admin.html",
     "./manifest.json",
     "./data/defis.json",
 
@@ -28,6 +29,7 @@ const FILES_TO_CACHE = [
     "./js/syncManager.js",
     "./js/offlineStatus.js",
     "./js/networkStatus.js",
+    "./js/admin.js",
 
 
     // Images principales
