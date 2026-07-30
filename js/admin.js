@@ -608,12 +608,9 @@ async function supprimerPhotoAdmin(
     // récupérer le chemin Storage
 
 const chemin =
-    decodeURIComponent(
-        photo.image_url
-    )
-    .split(
-        "/photo mariage/"
-    )[1];
+    new URL(photo.image_url)
+    .pathname
+    .split("/object/public/photo%20mariage/")[1];
 
 
 
@@ -621,26 +618,6 @@ const chemin =
         "Chemin Storage :",
         chemin
     );
-
-
-
-// suppression fichier Storage
-
-const { error: storageError } =
-    await supabaseClient
-    .storage
-    .from(
-        "photo mariage"
-    )
-    .remove([
-        chemin
-    ]);
-
-
-console.log(
-    "Résultat suppression Storage :",
-    storageError
-);
 
 
 // supprimer table photos
@@ -660,18 +637,27 @@ console.log(
     deleteError
 );
 
+// suppression fichier Storage
 
-if (deleteError) {
+const { error: storageError } =
+    await supabaseClient
+    .storage
+    .from(
+        "photo mariage"
+    )
+    .remove([
+        chemin
+    ]);
 
-    console.error(
-        "Erreur suppression base :",
-        deleteError
-    );
+    console.log(
+    "Suppression Storage demandée :",
+    chemin
+);
 
-    return;
-
-}
-
+console.log(
+    "Résultat suppression Storage :",
+    storageError
+);
 
     if (storageError) {
 
