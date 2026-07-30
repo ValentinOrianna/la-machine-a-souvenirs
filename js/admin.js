@@ -180,14 +180,53 @@ async function chargerParticipantsAdmin() {
 
 
 
-  listeParticipantsAdmin =
+ listeParticipantsAdmin =
     await chargerStatsParticipants(data);
 
 
 afficherParticipantsAdmin(
     listeParticipantsAdmin
-); }
+);
 
+
+
+const recherche =
+    document.getElementById(
+        "participantSearch"
+    );
+
+
+if (recherche) {
+
+    recherche.addEventListener(
+        "input",
+        () => {
+
+            const texte =
+                recherche.value
+                .toLowerCase()
+                .trim();
+
+
+            const resultats =
+                listeParticipantsAdmin.filter(
+                    participant =>
+                        participant.prenom
+                        .toLowerCase()
+                        .includes(texte)
+                );
+
+
+            afficherParticipantsAdmin(
+                resultats
+            );
+
+        }
+    );
+
+}
+
+}
 
 async function chargerStatsParticipants(participants) {
 
