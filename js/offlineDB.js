@@ -288,11 +288,7 @@ function genererIdOffline(prefix = "item") {
         .toString(36)
         .substring(2, 9)}`;
 
-}function creerSignaturePhoto(file) {
-
-    return `${file.name}-${file.size}-${file.lastModified}`;
-
-}function creerSignaturePhoto(file) {
+}  function creerSignaturePhoto(file) {
 
     return `${file.name}-${file.size}-${file.lastModified}`;
 

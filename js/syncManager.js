@@ -315,6 +315,118 @@ async function synchroniserLikesHorsLigne() {
 
 }
 
+// 3 - Synchronisation messages livre d'or
+
+async function synchroniserMessagesHorsLigne() {
+
+
+    if (!navigator.onLine) {
+
+        console.log(
+            "⚙️ Pas de connexion, synchronisation messages impossible"
+        );
+
+        return;
+
+    }
+
+
+
+    console.log(
+        "📖 Début synchronisation des messages..."
+    );
+
+
+
+    const messagesEnAttente = await recupererOffline(
+        STORES.MESSAGES
+    );
+
+
+
+    if (!messagesEnAttente.length) {
+
+        console.log(
+            "📖 Aucun message en attente"
+        );
+
+        return;
+
+    }
+
+
+
+    for (const message of messagesEnAttente) {
+
+
+        try {
+
+
+            const { error } =
+                await supabaseClient
+                .from("guestbook")
+                .insert({
+
+                    prenom: message.prenom,
+
+                    message: message.message
+
+                });
+
+
+
+            if (error) {
+
+
+                console.error(
+                    "Erreur synchronisation message",
+                    error
+                );
+
+
+                continue;
+
+            }
+
+
+
+            await supprimerOffline(
+                STORES.MESSAGES,
+                message.id
+            );
+
+
+
+            console.log(
+                "✅ Message synchronisé :",
+                message.message
+            );
+
+
+
+        } catch(error) {
+
+
+            console.error(
+                "Erreur synchronisation message",
+                error
+            );
+
+
+        }
+
+
+    }
+
+
+
+    console.log(
+        "📖 Synchronisation messages terminée"
+    );
+
+
+}
+
 
 
 
@@ -328,9 +440,12 @@ window.addEventListener(
             "🌐 Connexion retrouvée"
         );
 
+
         synchroniserPhotosHorsLigne();
 
         synchroniserLikesHorsLigne();
+
+        synchroniserMessagesHorsLigne();
 
     }
 );
@@ -340,8 +455,12 @@ window.addEventListener(
 
 if (navigator.onLine) {
 
+
     synchroniserPhotosHorsLigne();
 
     synchroniserLikesHorsLigne();
+
+    synchroniserMessagesHorsLigne();
+
 
 }

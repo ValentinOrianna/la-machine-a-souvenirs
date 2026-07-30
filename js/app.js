@@ -340,18 +340,78 @@ guestbookButton.addEventListener("click", async () => {
             return;
         }
 
-        const { error } = await supabaseClient
-            .from("guestbook")
-            .insert({
-                prenom: playerName,
-                message: message
-            });
+       if (!navigator.onLine) {
 
-        if (error) {
-            console.error(error);
-            alert("Erreur lors de la publication du message.");
-            return;
-        }
+
+    const messageEnAttente = {
+
+        id: genererIdOffline("message"),
+
+        prenom: playerName,
+
+        message: message,
+
+        date: new Date().toISOString(),
+
+        status: "pending"
+
+    };
+
+
+    await ajouterOffline(
+        STORES.MESSAGES,
+        messageEnAttente
+    );
+
+
+    console.log(
+        "📖 Message sauvegardé hors ligne",
+        messageEnAttente
+    );
+
+
+    guestbookMessage.value = "";
+
+
+    guestbookButton.textContent =
+        "⚙️ Message en attente de connexion";
+
+
+    setTimeout(() => {
+
+        guestbookButton.textContent =
+            "Publier";
+
+    }, 3000);
+
+
+    return;
+
+}
+
+
+
+// MODE EN LIGNE
+
+const { error } = await supabaseClient
+    .from("guestbook")
+    .insert({
+        prenom: playerName,
+        message: message
+    });
+
+
+if (error) {
+
+    console.error(error);
+
+    alert(
+        "Erreur lors de la publication du message."
+    );
+
+    return;
+
+}
 
         guestbookMessage.value = "";
 
