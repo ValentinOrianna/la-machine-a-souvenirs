@@ -470,7 +470,7 @@ async function chargerStatsAdmin() {
     }
 
 
-    // Si déjà ouverte → on ferme
+    // fermeture si déjà ouverte
     if (zone.innerHTML !== "") {
 
         zone.innerHTML = "";
@@ -504,6 +504,11 @@ async function chargerStatsAdmin() {
 
     zone.innerHTML = `
 
+    <h3>
+    📸 Photos du participant
+    </h3>
+
+
     <div class="adminPhotoGrid">
 
     </div>
@@ -526,31 +531,6 @@ async function chargerStatsAdmin() {
 
         <img
         src="${photo.image_url}">
-
-        `;
-
-
-    });
-
-    zone.innerHTML = `
-
-    <h3>
-    📸 Photos du participant
-    </h3>
-
-    `;
-
-
-    data.forEach(photo => {
-
-
-        zone.innerHTML += `
-
-        <img
-        src="${photo.image_url}"
-        width="150">
-
-        <br><br>
 
         `;
 
