@@ -85,17 +85,8 @@ loginButton.addEventListener(
                 "email",
                 user.email
             )
-            .maybeSingle();
-
-const { data: admin, error: adminError } =
-    await supabaseClient
-    .from("admins")
-    .select("*")
-    .eq(
-        "email",
-        user.email
-    )
-    .maybeSingle();
+            .maybeSingle(
+ );
 
 
 
