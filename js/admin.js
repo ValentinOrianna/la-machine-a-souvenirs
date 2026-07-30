@@ -136,6 +136,9 @@ await chargerParticipantsAdmin();
     }
 );
 
+let listeParticipantsAdmin = [];
+
+
 async function chargerParticipantsAdmin() {
 
 
@@ -150,6 +153,7 @@ async function chargerParticipantsAdmin() {
     }
 
 
+
     const { data, error } =
         await supabaseClient
         .from("participants")
@@ -157,9 +161,10 @@ async function chargerParticipantsAdmin() {
         .order(
             "prenom",
             {
-                ascending: true
+                ascending:true
             }
         );
+
 
 
     if (error) {
@@ -174,13 +179,82 @@ async function chargerParticipantsAdmin() {
     }
 
 
+
+    listeParticipantsAdmin = data;
+
+
+    afficherParticipantsAdmin(
+        listeParticipantsAdmin
+    );
+
+
+
+    const recherche =
+        document.getElementById(
+            "participantSearch"
+        );
+
+
+    if (recherche) {
+
+
+        recherche.addEventListener(
+            "input",
+            () => {
+
+
+                const texte =
+                    recherche.value
+                    .toLowerCase()
+                    .trim();
+
+
+
+                const resultats =
+                    listeParticipantsAdmin.filter(
+                        participant =>
+                            participant.prenom
+                            .toLowerCase()
+                            .includes(texte)
+                    );
+
+
+                afficherParticipantsAdmin(
+                    resultats
+                );
+
+
+            }
+        );
+
+    }
+
+
+}
+
+
+
+function afficherParticipantsAdmin(
+    participants
+) {
+
+
+    const zone =
+        document.getElementById(
+            "adminParticipantsList"
+        );
+
+
     zone.innerHTML = "";
 
 
-    if (!data.length) {
+
+    if (!participants.length) {
+
 
         zone.textContent =
             "Aucun participant";
+
 
         return;
 
@@ -188,31 +262,43 @@ async function chargerParticipantsAdmin() {
 
 
 
-    data.forEach(participant => {
+    participants.forEach(
+        participant => {
 
 
-        const ligne =
-            document.createElement("div");
+            const carte =
+                document.createElement(
+                    "div"
+                );
 
 
-        ligne.textContent =
-            `👤 ${participant.prenom}`;
-
-
-        zone.appendChild(ligne);
-
-
-    });
+            carte.className =
+                "participantCard";
 
 
 
-    console.log(
-        "✅ Participants chargés",
-        data
+            carte.innerHTML = `
+
+                👤 <strong>
+                ${participant.prenom}
+                </strong>
+
+            `;
+
+
+
+            zone.appendChild(
+                carte
+            );
+
+
+        }
     );
 
 
-}async function chargerStatsAdmin() {
+}
+
+async function chargerStatsAdmin() {
 
 
     const zone =
