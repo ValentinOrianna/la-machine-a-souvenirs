@@ -180,9 +180,16 @@ async function chargerParticipantsAdmin() {
 
 
 
-     listeParticipantsAdmin = await chargerStatsParticipants(data);
+  listeParticipantsAdmin =
+    await chargerStatsParticipants(data);
 
-     async function chargerStatsParticipants(participants) {
+
+afficherParticipantsAdmin(
+    listeParticipantsAdmin
+); }
+
+
+async function chargerStatsParticipants(participants) {
 
 
     const resultat = [];
@@ -195,8 +202,8 @@ async function chargerParticipantsAdmin() {
             await supabaseClient
             .from("photos")
             .select("*", {
-                count:"exact",
-                head:true
+                count: "exact",
+                head: true
             })
             .eq(
                 "participant_id",
@@ -204,13 +211,12 @@ async function chargerParticipantsAdmin() {
             );
 
 
-
         const { count: messages } =
             await supabaseClient
             .from("guestbook")
             .select("*", {
-                count:"exact",
-                head:true
+                count: "exact",
+                head: true
             })
             .eq(
                 "prenom",
@@ -218,16 +224,13 @@ async function chargerParticipantsAdmin() {
             );
 
 
-
         resultat.push({
 
             ...participant,
 
-            photos:
-                photos || 0,
+            photos: photos || 0,
 
-            messages:
-                messages || 0
+            messages: messages || 0
 
         });
 
@@ -237,75 +240,7 @@ async function chargerParticipantsAdmin() {
 
     return resultat;
 
-}
-
-
- carte.innerHTML = `
-
-    👤 <strong>
-    ${participant.prenom}
-    </strong>
-
-
-    <br><br>
-
-    📸 Photos :
-    ${participant.photos}
-
-
-    <br>
-
-    📖 Messages :
-    ${participant.messages}
-
-`;
-
-
-
-    const recherche =
-        document.getElementById(
-            "participantSearch"
-        );
-
-
-    if (recherche) {
-
-
-        recherche.addEventListener(
-            "input",
-            () => {
-
-
-                const texte =
-                    recherche.value
-                    .toLowerCase()
-                    .trim();
-
-
-
-                const resultats =
-                    listeParticipantsAdmin.filter(
-                        participant =>
-                            participant.prenom
-                            .toLowerCase()
-                            .includes(texte)
-                    );
-
-
-                afficherParticipantsAdmin(
-                    resultats
-                );
-
-
-            }
-        );
-
-    }
-
-
-}
-
-
+;}
 
 function afficherParticipantsAdmin(
     participants
@@ -350,13 +285,27 @@ function afficherParticipantsAdmin(
 
 
 
-            carte.innerHTML = `
+           carte.innerHTML = `
 
-                👤 <strong>
-                ${participant.prenom}
-                </strong>
+    👤 <strong>
+    ${participant.prenom}
+    </strong>
 
-            `;
+
+    <br><br>
+
+
+    📸 Photos :
+    ${participant.photos}
+
+
+    <br>
+
+
+    📖 Messages :
+    ${participant.messages}
+
+`;
 
 
 
