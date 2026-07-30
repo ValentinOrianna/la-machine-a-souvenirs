@@ -96,7 +96,7 @@ console.log(
 );
 
 
-cconsole.log(
+console.log(
     "Recherche admin avec :",
     user.email
 );
@@ -106,9 +106,9 @@ const { data: admin, error: adminError } =
     await supabaseClient
     .from("admins")
     .select("*")
-    .eq(
+    .ilike(
         "email",
-        user.email
+        user.email.trim()
     )
     .maybeSingle();
 
