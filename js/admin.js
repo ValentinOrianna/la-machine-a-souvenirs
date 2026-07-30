@@ -434,6 +434,8 @@ async function chargerStatsAdmin() {
 
     zone.innerHTML = `
 
+        <br><br>
+
         👥 Participants :
         ${participants || 0}
 
