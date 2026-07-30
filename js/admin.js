@@ -326,25 +326,37 @@ function afficherParticipantsAdmin(
 
            carte.innerHTML = `
 
-    👤 <strong>
-    ${participant.prenom}
-    </strong>
+👤 <strong>
+${participant.prenom}
+</strong>
+
+<br>
+
+📸 Photos :
+${participant.photos}
+
+<br>
+
+📖 Messages :
+${participant.messages}
+
+<br><br>
+
+<button 
+onclick="voirPhotosParticipant('${participant.id}')">
+
+📸 Voir ses photos
+
+</button>
 
 
-    <br>
+<button 
+onclick="voirMessagesParticipant('${participant.prenom}')">
 
+📖 Voir ses messages
 
-    📸 Photos :
-    ${participant.photos}
+</button>
 
-
-    <br>
-
-
-    📖 Messages :
-    ${participant.messages}
-
-    <br><br>
 `;
 
 
@@ -436,6 +448,61 @@ async function chargerStatsAdmin() {
         ${likes || 0}
 
     `;
+
+
+}
+async function voirPhotosParticipant(id) {
+
+
+    const zone =
+        document.getElementById(
+            "adminDetails"
+        );
+
+
+    const { data, error } =
+        await supabaseClient
+        .from("photos")
+        .select("*")
+        .eq(
+            "participant_id",
+            id
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+
+    }
+
+
+    zone.innerHTML = `
+
+    <h3>
+    📸 Photos du participant
+    </h3>
+
+    `;
+
+
+    data.forEach(photo => {
+
+
+        zone.innerHTML += `
+
+        <img
+        src="${photo.image_url}"
+        width="150">
+
+        <br><br>
+
+        `;
+
+
+    });
 
 
 }
