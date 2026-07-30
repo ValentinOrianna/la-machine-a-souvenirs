@@ -601,9 +601,17 @@ async function supprimerPhotoAdmin(
 
 
 
-    await voirPhotosParticipant(
-        participantId
+  const zone =
+    document.getElementById(
+        `photos-${participantId}`
     );
+
+
+zone.innerHTML = "";
+
+await voirPhotosParticipant(
+    participantId
+);
 
 
     await chargerStatsAdmin();
