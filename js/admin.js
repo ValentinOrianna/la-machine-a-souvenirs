@@ -96,10 +96,21 @@ console.log(
 );
 
 
-console.log(
-    "Résultat recherche admins :",
-    admin
+cconsole.log(
+    "Recherche admin avec :",
+    user.email
 );
+
+
+const { data: admin, error: adminError } =
+    await supabaseClient
+    .from("admins")
+    .select("*")
+    .eq(
+        "email",
+        user.email
+    )
+    .maybeSingle();
 
 
 
