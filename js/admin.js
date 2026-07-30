@@ -292,7 +292,7 @@ function afficherParticipantsAdmin(
     </strong>
 
 
-    <br><br>
+    <br>
 
 
     📸 Photos :
@@ -305,6 +305,7 @@ function afficherParticipantsAdmin(
     📖 Messages :
     ${participant.messages}
 
+    <br><br>
 `;
 
 
