@@ -180,12 +180,85 @@ async function chargerParticipantsAdmin() {
 
 
 
-    listeParticipantsAdmin = data;
+     listeParticipantsAdmin = await chargerStatsParticipants(data);
+
+     async function chargerStatsParticipants(participants) {
 
 
-    afficherParticipantsAdmin(
-        listeParticipantsAdmin
-    );
+    const resultat = [];
+
+
+    for (const participant of participants) {
+
+
+        const { count: photos } =
+            await supabaseClient
+            .from("photos")
+            .select("*", {
+                count:"exact",
+                head:true
+            })
+            .eq(
+                "participant_id",
+                participant.id
+            );
+
+
+
+        const { count: messages } =
+            await supabaseClient
+            .from("guestbook")
+            .select("*", {
+                count:"exact",
+                head:true
+            })
+            .eq(
+                "prenom",
+                participant.prenom
+            );
+
+
+
+        resultat.push({
+
+            ...participant,
+
+            photos:
+                photos || 0,
+
+            messages:
+                messages || 0
+
+        });
+
+
+    }
+
+
+    return resultat;
+
+}
+
+
+ carte.innerHTML = `
+
+    👤 <strong>
+    ${participant.prenom}
+    </strong>
+
+
+    <br><br>
+
+    📸 Photos :
+    ${participant.photos}
+
+
+    <br>
+
+    📖 Messages :
+    ${participant.messages}
+
+`;
 
 
 
