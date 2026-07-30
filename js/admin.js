@@ -340,7 +340,7 @@ ${participant.photos}
 📖 Messages :
 ${participant.messages}
 
-<br><br>
+<br>
 
 <button 
 onclick="voirPhotosParticipant('${participant.id}')">
@@ -356,6 +356,8 @@ onclick="voirMessagesParticipant('${participant.prenom}')">
 📖 Voir ses messages
 
 </button>
+
+<br>
 
 `;
 
