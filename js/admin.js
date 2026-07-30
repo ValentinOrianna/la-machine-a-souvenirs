@@ -71,6 +71,10 @@ loginButton.addEventListener(
         const user =
             data.user;
 
+            console.log(
+           "Utilisateur connecté :",
+            user.email
+);
 
 
         const { data: admin, error: adminError } =
@@ -83,9 +87,32 @@ loginButton.addEventListener(
             )
             .maybeSingle();
 
+const { data: admin, error: adminError } =
+    await supabaseClient
+    .from("admins")
+    .select("*")
+    .eq(
+        "email",
+        user.email
+    )
+    .maybeSingle();
 
 
-        if (adminError || !admin) {
+
+console.log(
+    "Utilisateur Auth :",
+    user.email
+);
+
+
+console.log(
+    "Résultat recherche admins :",
+    admin
+);
+
+
+
+if (adminError || !admin) {
 
 
             console.error(adminError);
