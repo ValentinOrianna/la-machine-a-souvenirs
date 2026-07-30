@@ -129,6 +129,7 @@ loginBox.style.display =
 adminPanel.style.display =
     "block";
 
+await chargerStatsAdmin();
 
 await chargerParticipantsAdmin();
 
@@ -209,6 +210,84 @@ async function chargerParticipantsAdmin() {
         "✅ Participants chargés",
         data
     );
+
+
+}async function chargerStatsAdmin() {
+
+
+    const zone =
+        document.getElementById(
+            "adminStatsContent"
+        );
+
+
+    if (!zone) {
+        return;
+    }
+
+
+
+    const { count: participants } =
+        await supabaseClient
+        .from("participants")
+        .select("*", {
+            count: "exact",
+            head: true
+        });
+
+
+
+    const { count: photos } =
+        await supabaseClient
+        .from("photos")
+        .select("*", {
+            count: "exact",
+            head: true
+        });
+
+
+
+    const { count: messages } =
+        await supabaseClient
+        .from("guestbook")
+        .select("*", {
+            count: "exact",
+            head: true
+        });
+
+
+
+    const { count: likes } =
+        await supabaseClient
+        .from("likes")
+        .select("*", {
+            count: "exact",
+            head: true
+        });
+
+
+
+    zone.innerHTML = `
+
+        👥 Participants :
+        ${participants || 0}
+
+        <br><br>
+
+        📸 Photos :
+        ${photos || 0}
+
+        <br><br>
+
+        📖 Messages :
+        ${messages || 0}
+
+        <br><br>
+
+        ❤️ Likes :
+        ${likes || 0}
+
+    `;
 
 
 }
