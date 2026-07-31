@@ -360,6 +360,8 @@ onclick="voirMessagesParticipant('${participant.prenom}')">
 
 </button>
 
+<div id="messages-${participant.prenom}"></div>
+
 <br>
 
 `;
@@ -716,6 +718,113 @@ if (zone) {
 await chargerStatsAdmin();
 
 await chargerParticipantsAdmin();
+
+
+}
+async function voirMessagesParticipant(prenom) {
+
+
+    const zone =
+        document.getElementById(
+            `messages-${prenom}`
+        );
+
+
+    if (!zone) {
+        return;
+    }
+
+
+
+    // fermeture si déjà ouvert
+
+    if (zone.innerHTML !== "") {
+
+        zone.innerHTML = "";
+
+        return;
+
+    }
+
+
+
+    const { data, error } =
+        await supabaseClient
+        .from("guestbook")
+        .select("*")
+        .eq(
+            "prenom",
+            prenom
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+
+    }
+
+
+
+    if (!data.length) {
+
+        zone.innerHTML =
+            "📖 Aucun message";
+
+        return;
+
+    }
+
+
+
+    zone.innerHTML = `
+
+    <h4>
+    📖 Messages de ${prenom}
+    </h4>
+
+    `;
+
+
+
+    data.forEach(message => {
+
+
+        zone.innerHTML += `
+
+        <div class="adminMessageCard">
+
+
+            💬 ${message.message}
+
+
+            <br>
+
+
+            🕒 ${
+                new Date(
+                    message.created_at
+                )
+                .toLocaleString("fr-FR")
+            }
+
+
+        </div>
+
+
+        `;
+
+
+    });
 
 
 }
