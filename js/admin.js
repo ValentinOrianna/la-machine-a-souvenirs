@@ -867,6 +867,16 @@ async function supprimerMessageAdmin(
             "id",
             messageId
         );
+        
+        console.log(
+    "Suppression message ID :",
+    messageId
+);
+
+console.log(
+    "Résultat suppression message :",
+    error
+);
 
 
 
