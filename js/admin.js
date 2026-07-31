@@ -620,6 +620,39 @@ const chemin =
     );
 
 
+// supprimer fichier Storage
+
+const { data: storageData, error: storageError } =
+    await supabaseClient
+    .storage
+    .from(
+        "photo mariage"
+    )
+    .remove([
+        chemin
+    ]);
+
+
+console.log(
+    "Retour suppression Storage :",
+    storageData,
+    storageError
+);
+
+
+
+if (storageError) {
+
+    console.error(
+        "Erreur Storage :",
+        storageError
+    );
+
+    return;
+
+}
+
+
 // supprimer table photos
 
 const { error: deleteError } =
