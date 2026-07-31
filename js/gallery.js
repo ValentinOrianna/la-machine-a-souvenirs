@@ -14,15 +14,16 @@ if (!galleryGrid) {
 
     photosAffichees = 0;
 
-    const { data, error } = await supabaseClient.storage
-        .from("photo mariage")
-        .list("souvenirs", {
-            limit: 3000,
-            sortBy: {
-                column: "created_at",
-                order: "desc"
-            }
-        });
+  const { data, error } =
+    await supabaseClient
+    .from("photos")
+    .select("*")
+    .order(
+        "created_at",
+        {
+            ascending:false
+        }
+    );
 
     if (error) {
         console.error("Erreur galerie :", error);
@@ -56,32 +57,47 @@ async function afficherPhotosSuivantes() {
 
     for (const photo of photosAShow) {
 
-        const { data: urlData } = supabaseClient.storage
-            .from("photo mariage")
-            .getPublicUrl(`souvenirs/${photo.name}`);
+ const carte = document.createElement("div");
 
-        const carte = document.createElement("div");
-        carte.className = "photoCard";
+carte.className = "photoCard";
 
-        const img = document.createElement("img");
 
-        img.src = urlData.publicUrl;
-        img.loading = "lazy";
-        img.decoding = "async";
-        img.alt = "Photo souvenir";
+const img = document.createElement("img");
 
-        img.className = "galleryPhoto";
 
-        img.addEventListener("click", () => {
-            ouvrirPhoto(urlData.publicUrl);
-        });
+img.src = photo.image_url;
+
+img.loading = "lazy";
+
+img.decoding = "async";
+
+img.alt = "Photo souvenir";
+
+
+img.className = "galleryPhoto";
+
+
+img.addEventListener("click", () => {
+
+    ouvrirPhoto(
+        photo.image_url
+    );
+
+});
 
         const likeButton = document.createElement("button");
         likeButton.className = "likeButton";
 
-        const dejaLike = localStorage.getItem(`like-${photo.name}`);
+       const dejaLike =
+    localStorage.getItem(
+        `like-${photo.id}`
+    );
 
-        const nombreLikes = await compterLikes(photo.name);
+
+const nombreLikes =
+    await compterLikes(
+        photo.id
+    );
 
         likeButton.textContent = dejaLike
             ? `❤️ ${nombreLikes}`
@@ -93,25 +109,25 @@ async function afficherPhotosSuivantes() {
      likeButton.addEventListener("click", async () => {
 
 
-    if (localStorage.getItem(`like-${photo.name}`)) {
+    if (localStorage.getItem(`like-${photo.id}`)) {
 
-        return;
+    return;
 
-    }
+}
 
 
 
-    const likeData = {
+   const likeData = {
 
-        id: genererIdOffline("like"),
+    id: genererIdOffline("like"),
 
-        photo_name: photo.name,
+    photo_name: photo.id,
 
-        date: new Date().toISOString(),
+    date: new Date().toISOString(),
 
-        status: "pending"
+    status: "pending"
 
-    };
+};
 
 
 
@@ -129,12 +145,12 @@ async function afficherPhotosSuivantes() {
 await afficherElementsEnAttente();
 
         localStorage.setItem(
-            `like-${photo.name}`,
+            `like-${photo.id}`,
             "true"
         );
 
 
-        const nouveauTotal = await compterLikes(photo.name);
+        const nouveauTotal = await compterLikes(photo.id);
 
 
         likeButton.textContent =
@@ -164,7 +180,7 @@ await afficherElementsEnAttente();
         .from("likes")
         .insert({
 
-            photo_name: photo.name
+            photo_name: photo.id
 
         });
 
@@ -186,13 +202,13 @@ await afficherElementsEnAttente();
 
 
     localStorage.setItem(
-        `like-${photo.name}`,
+        `like-${photo.id}`,
         "true"
     );
 
 
     const nouveauTotal =
-        await compterLikes(photo.name);
+        await compterLikes(photo.id);
 
 
     likeButton.textContent =
@@ -364,10 +380,20 @@ function ouvrirPhoto(url) {
 
         const [photoName, nbLikes] = top3[i];
 
-        const { data: urlData } = supabaseClient.storage
-            .from("photo mariage")
-            .getPublicUrl(`souvenirs/${photoName}`);
+       const { data: photoData } =
+    await supabaseClient
+    .from("photos")
+    .select("image_url")
+    .eq(
+        "id",
+        photoName
+    )
+    .single();
 
+
+if (!photoData) {
+    continue;
+}
         let medal = "🏅";
 
         if (i === 0) medal = "🥇";
