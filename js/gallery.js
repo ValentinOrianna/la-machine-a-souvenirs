@@ -347,15 +347,27 @@ function ouvrirPhoto(url) {
 
 }async function chargerTopPhotos() {
 
+    console.log(
+    "Nouvelle version chargerTopPhotos chargée"
+);
+
     const container = document.getElementById("topPhotos");
 
     if (!container) return;
 
     container.innerHTML = "";
 
-    const { data: likes, error } = await supabaseClient
-        .from("likes")
-        .select("*");
+    const { data: likes, error } =
+    await supabaseClient
+    .from("likes")
+    .select("*");
+
+
+if (error) {
+    console.error(error);
+    return;
+}
+
 
 const { data: photosExistantes } =
     await supabaseClient
@@ -364,7 +376,8 @@ const { data: photosExistantes } =
 
 
 const idsPhotos =
-    photosExistantes.map(
+    (photosExistantes || [])
+    .map(
         photo => photo.id
     );
 
@@ -426,10 +439,10 @@ if (!photoData) {
 
         card.className = "topPhotoCard";
 
-        card.innerHTML = `
-            <img src="${urlData.publicUrl}">
-            <p>${medal} ❤️ ${nbLikes}</p>
-        `;
+       card.innerHTML = `
+    <img src="${photoData.image_url}">
+    <p>${medal} ❤️ ${nbLikes}</p>
+`;
 
         container.appendChild(card);
     }
