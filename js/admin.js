@@ -637,38 +637,27 @@ console.log(
     deleteError
 );
 
-// suppression fichier Storage
+// Vérification des fichiers présents
 
-const { data: storageData, error: storageError } =
+const { data: fichiers, error: erreurListe } =
     await supabaseClient
     .storage
-    .from(
-        "photo mariage"
-    )
-    .remove([
-        chemin
-    ]);
+    .from("photo mariage")
+    .list("souvenirs", {
+        limit: 100
+    });
 
 
 console.log(
-    "Suppression Storage demandée :",
-    chemin
+    "Fichiers Storage actuels :",
+    fichiers
 );
 
 
-console.log(
-    "Retour suppression Storage :",
-    storageData,
-    storageError
-);
-
-
-
-if (storageError) {
+if (erreurListe) {
 
     console.error(
-        "Erreur Storage :",
-        storageError
+        erreurListe
     );
 
     return;
