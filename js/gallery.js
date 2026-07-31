@@ -344,6 +344,7 @@ function ouvrirPhoto(url) {
     });
 
     document.body.appendChild(overlay);
+
 }async function chargerTopPhotos() {
 
     const container = document.getElementById("topPhotos");
@@ -356,14 +357,35 @@ function ouvrirPhoto(url) {
         .from("likes")
         .select("*");
 
+const { data: photosExistantes } =
+    await supabaseClient
+    .from("photos")
+    .select("id");
+
+
+const idsPhotos =
+    photosExistantes.map(
+        photo => photo.id
+    );
+
+
+const likesValides =
+    likes.filter(
+        like =>
+            idsPhotos.includes(
+                like.photo_name
+            )
+    );
+
     if (error) {
         console.error(error);
         return;
+        
     }
 
     const compteLikes = {};
 
-    likes.forEach(like => {
+    likesValides.forEach(like => {
 
         if (!compteLikes[like.photo_name]) {
             compteLikes[like.photo_name] = 0;
