@@ -894,12 +894,25 @@ console.log(
 
 
 
-    await voirMessagesParticipant(
-        prenom
+    const zone =
+    document.getElementById(
+        `messages-${prenom}`
     );
 
 
-    await chargerStatsAdmin();
+if (zone) {
+
+    zone.innerHTML = "";
+
+}
+
+
+await voirMessagesParticipant(
+    prenom
+);
+
+
+await chargerStatsAdmin();
 
 
 }
