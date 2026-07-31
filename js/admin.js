@@ -721,6 +721,8 @@ await chargerParticipantsAdmin();
 
 
 }
+
+
 async function voirMessagesParticipant(prenom) {
 
 
@@ -796,35 +798,98 @@ async function voirMessagesParticipant(prenom) {
 
 
 
-    data.forEach(message => {
+  data.forEach(message => {
 
 
-        zone.innerHTML += `
+    zone.innerHTML += `
 
-        <div class="adminMessageCard">
-
-
-            💬 ${message.message}
+<div class="adminMessageCard">
 
 
-            <br>
+💬 ${message.message}
 
 
-            🕒 ${
-                new Date(
-                    message.created_at
-                )
-                .toLocaleString("fr-FR")
-            }
+<br>
 
 
-        </div>
+🕒 ${
+    new Date(
+        message.created_at
+    )
+    .toLocaleString("fr-FR")
+}
 
 
-        `;
+<br>
 
+
+<button
+onclick="supprimerMessageAdmin('${message.id}','${prenom}')">
+
+🗑️ Supprimer
+
+</button>
+
+
+</div>
+
+
+`;
 
     });
+
+
+}
+
+async function supprimerMessageAdmin(
+    messageId,
+    prenom
+) {
+
+
+    const confirmation =
+        confirm(
+            "Supprimer ce message ?"
+        );
+
+
+    if (!confirmation) {
+        return;
+    }
+
+
+
+    const { error } =
+        await supabaseClient
+        .from("guestbook")
+        .delete()
+        .eq(
+            "id",
+            messageId
+        );
+
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erreur suppression message"
+        );
+
+        return;
+
+    }
+
+
+
+    await voirMessagesParticipant(
+        prenom
+    );
+
+
+    await chargerStatsAdmin();
 
 
 }
