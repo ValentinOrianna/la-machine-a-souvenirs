@@ -796,6 +796,8 @@ async function voirMessagesParticipant(prenom) {
 
     `;
 
+    zone.dataset.open = "true";
+
 
 
   data.forEach(message => {
@@ -894,7 +896,7 @@ console.log(
 
 
 
-    const zone =
+   const zone =
     document.getElementById(
         `messages-${prenom}`
     );
@@ -902,7 +904,7 @@ console.log(
 
 if (zone) {
 
-    zone.innerHTML = "";
+    zone.innerHTML = "Chargement...";
 
 }
 
