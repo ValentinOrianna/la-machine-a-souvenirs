@@ -571,6 +571,8 @@ async function compterLikes(photoName) {
 
 
     return total;
+    }
+
 /* =========================================================
    SÉLECTION DES PHOTOS
 ========================================================= */
@@ -1034,5 +1036,4 @@ async function chargerTopPhotos() {
         );
 
     }
-}
 }
