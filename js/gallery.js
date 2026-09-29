@@ -1,261 +1,441 @@
 let toutesLesPhotos = [];
 let photosAffichees = 0;
+
 const NOMBRE_PAR_PAGE = 30;
+
+const BUCKET_PHOTOS = "photo mariage";
+const DOSSIER_PHOTOS = "souvenirs";
+
+
+/* =========================================================
+   OUTILS STORAGE
+========================================================= */
+
+function estUneImage(photo) {
+
+    if (!photo || !photo.name) {
+        return false;
+    }
+
+    const type = photo.metadata?.mimetype || "";
+
+    if (type.startsWith("image/")) {
+        return true;
+    }
+
+    return /\.(jpg|jpeg|png|webp|gif)$/i.test(photo.name);
+}
+
+
+function obtenirUrlPhoto(nomFichier) {
+
+    const chemin =
+        `${DOSSIER_PHOTOS}/${nomFichier}`;
+
+    const { data } =
+        supabaseClient.storage
+            .from(BUCKET_PHOTOS)
+            .getPublicUrl(chemin);
+
+    return data.publicUrl;
+}
+
+
+/* =========================================================
+   GALERIE
+========================================================= */
 
 async function chargerGalerie() {
 
-   const galleryGrid = document.getElementById("galleryGrid");
+    const galleryGrid =
+        document.getElementById("galleryGrid");
 
-if (!galleryGrid) {
-    console.warn("galleryGrid introuvable");
-    return;
-}
+    if (!galleryGrid) {
+
+        console.warn(
+            "galleryGrid introuvable"
+        );
+
+        return;
+    }
+
+
     galleryGrid.innerHTML = "";
 
     photosAffichees = 0;
 
-  const { data, error } =
-    await supabaseClient
-    .from("photos")
-    .select("*")
-    .order(
-        "created_at",
-        {
-            ascending:false
-        }
-    );
+
+    const { data, error } =
+        await supabaseClient.storage
+            .from(BUCKET_PHOTOS)
+            .list(DOSSIER_PHOTOS, {
+
+                limit: 1000,
+
+                sortBy: {
+                    column: "created_at",
+                    order: "desc"
+                }
+
+            });
+
 
     if (error) {
-        console.error("Erreur galerie :", error);
+
+        console.error(
+            "Erreur galerie Storage :",
+            error
+        );
+
         return;
     }
+
+
     console.log(
-    "Fichiers Storage trouvés :",
-    data
-);
+        "Fichiers trouvés dans le Storage :",
+        data
+    );
 
-    toutesLesPhotos = data || [];
 
-    const photoCount = document.getElementById("photoCount");
+    toutesLesPhotos =
+        (data || [])
+            .filter(estUneImage)
+            .map(photo => {
+
+                return {
+
+                    ...photo,
+
+                    storageName: photo.name,
+
+                    storagePath:
+                        `${DOSSIER_PHOTOS}/${photo.name}`,
+
+                    image_url:
+                        obtenirUrlPhoto(photo.name),
+
+                    likeKey:
+                        photo.name
+
+                };
+
+            });
+
+
+    const photoCount =
+        document.getElementById("photoCount");
+
 
     if (photoCount) {
+
         photoCount.textContent =
             `📸 ${toutesLesPhotos.length} souvenirs capturés`;
+
     }
+
 
     afficherPhotosSuivantes();
 }
 
+
+/* =========================================================
+   AFFICHAGE DES PHOTOS
+========================================================= */
+
 async function afficherPhotosSuivantes() {
 
-    const galleryGrid = document.getElementById("galleryGrid");
+    const galleryGrid =
+        document.getElementById("galleryGrid");
 
-    const photosAShow = toutesLesPhotos.slice(
-        photosAffichees,
-        photosAffichees + NOMBRE_PAR_PAGE
-    );
+
+    if (!galleryGrid) {
+        return;
+    }
+
+
+    const photosAShow =
+        toutesLesPhotos.slice(
+
+            photosAffichees,
+
+            photosAffichees +
+            NOMBRE_PAR_PAGE
+
+        );
+
 
     for (const photo of photosAShow) {
 
- const carte = document.createElement("div");
 
-carte.className = "photoCard";
+        const carte =
+            document.createElement("div");
 
-
-const img = document.createElement("img");
-
-
-img.src = photo.image_url;
-
-img.loading = "lazy";
-
-img.decoding = "async";
-
-img.alt = "Photo souvenir";
+        carte.className =
+            "photoCard";
 
 
-img.className = "galleryPhoto";
+        /* PHOTO */
+
+        const img =
+            document.createElement("img");
 
 
-img.addEventListener("click", () => {
-
-    ouvrirPhoto(
-        photo.image_url
-    );
-
-});
-
-        const likeButton = document.createElement("button");
-        likeButton.className = "likeButton";
-
-       const dejaLike =
-    localStorage.getItem(
-        `like-${photo.id}`
-    );
+        img.src =
+            photo.image_url;
 
 
-const nombreLikes =
-    await compterLikes(
-        photo.id
-    );
-
-        likeButton.textContent = dejaLike
-            ? `❤️ ${nombreLikes}`
-            : `🤍 ${nombreLikes}`;
-
-        likeButton.disabled = !!dejaLike;
-        await chargerTopPhotos();
-
-     likeButton.addEventListener("click", async () => {
+        img.loading =
+            "lazy";
 
 
-    if (localStorage.getItem(`like-${photo.id}`)) {
-
-    return;
-
-}
+        img.decoding =
+            "async";
 
 
-
-   const likeData = {
-
-    id: genererIdOffline("like"),
-
-    photo_name: photo.id,
-
-    date: new Date().toISOString(),
-
-    status: "pending"
-
-};
+        img.alt =
+            "Photo souvenir";
 
 
+        img.className =
+            "galleryPhoto";
 
 
-    // MODE HORS LIGNE
+        img.addEventListener(
+            "click",
+            () => {
 
-    if (!navigator.onLine) {
+                ouvrirPhoto(
+                    photo.image_url
+                );
 
-
-        await ajouterOffline(
-            STORES.LIKES,
-            likeData
-        );
-        
-await afficherElementsEnAttente();
-
-        localStorage.setItem(
-            `like-${photo.id}`,
-            "true"
+            }
         );
 
 
-        const nouveauTotal = await compterLikes(photo.id);
+        /* LIKE */
+
+        const likeButton =
+            document.createElement("button");
+
+        likeButton.className =
+            "likeButton";
+
+
+        const identifiantPhoto =
+            photo.likeKey;
+
+
+        const dejaLike =
+            localStorage.getItem(
+                `like-${identifiantPhoto}`
+            );
+
+
+        const nombreLikes =
+            await compterLikes(
+                identifiantPhoto
+            );
 
 
         likeButton.textContent =
-            `❤️ ${nouveauTotal + 1}`;
+            dejaLike
+                ? `❤️ ${nombreLikes}`
+                : `🤍 ${nombreLikes}`;
 
 
-        likeButton.disabled = true;
+        likeButton.disabled =
+            !!dejaLike;
 
 
+        likeButton.addEventListener(
+            "click",
+            async () => {
 
-        console.log(
-            "❤️ Like sauvegardé hors ligne",
-            likeData
+
+                if (
+                    localStorage.getItem(
+                        `like-${identifiantPhoto}`
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                const likeData = {
+
+                    id:
+                        genererIdOffline(
+                            "like"
+                        ),
+
+                    photo_name:
+                        identifiantPhoto,
+
+                    date:
+                        new Date()
+                            .toISOString(),
+
+                    status:
+                        "pending"
+
+                };
+
+
+                /* =========================
+                   MODE HORS LIGNE
+                ========================= */
+
+                if (!navigator.onLine) {
+
+
+                    await ajouterOffline(
+                        STORES.LIKES,
+                        likeData
+                    );
+
+
+                    await afficherElementsEnAttente();
+
+
+                    localStorage.setItem(
+                        `like-${identifiantPhoto}`,
+                        "true"
+                    );
+
+
+                    const nouveauTotal =
+                        await compterLikes(
+                            identifiantPhoto
+                        );
+
+
+                    likeButton.textContent =
+                        `❤️ ${nouveauTotal}`;
+
+
+                    likeButton.disabled =
+                        true;
+
+
+                    console.log(
+                        "❤️ Like sauvegardé hors ligne",
+                        likeData
+                    );
+
+
+                    return;
+                }
+
+
+                /* =========================
+                   MODE EN LIGNE
+                ========================= */
+
+                const { error } =
+                    await supabaseClient
+                        .from("likes")
+                        .insert({
+
+                            photo_name:
+                                identifiantPhoto
+
+                        });
+
+
+                if (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Erreur lors du like."
+                    );
+
+                    return;
+                }
+
+
+                localStorage.setItem(
+                    `like-${identifiantPhoto}`,
+                    "true"
+                );
+
+
+                const nouveauTotal =
+                    await compterLikes(
+                        identifiantPhoto
+                    );
+
+
+                likeButton.textContent =
+                    `❤️ ${nouveauTotal}`;
+
+
+                likeButton.disabled =
+                    true;
+
+
+                await chargerTopPhotos();
+
+            }
         );
 
-
-        return;
-
-    }
-
-
-
-
-    // MODE EN LIGNE
-
-    const { error } = await supabaseClient
-        .from("likes")
-        .insert({
-
-            photo_name: photo.id
-
-        });
-
-
-
-    if (error) {
-
-
-        console.error(error);
-
-        alert(
-            "Erreur lors du like."
-        );
-
-        return;
-
-    }
-
-
-
-    localStorage.setItem(
-        `like-${photo.id}`,
-        "true"
-    );
-
-
-    const nouveauTotal =
-        await compterLikes(photo.id);
-
-
-    likeButton.textContent =
-        `❤️ ${nouveauTotal}`;
-
-
-    likeButton.disabled = true;
-
-
-});
 
         carte.appendChild(img);
-        carte.appendChild(likeButton);
 
-        galleryGrid.appendChild(carte);
+        carte.appendChild(
+            likeButton
+        );
+
+
+        galleryGrid.appendChild(
+            carte
+        );
+
     }
 
-    photosAffichees += photosAShow.length;
+
+    photosAffichees +=
+        photosAShow.length;
+
 
     gererBoutonVoirPlus();
 }
 
-async function compterLikes(photoName) {
 
+/* =========================================================
+   COMPTER LES LIKES
+========================================================= */
+
+async function compterLikes(photoName) {
 
     let total = 0;
 
 
-
-    // Likes déjà présents dans Supabase
+    /* LIKES SUPABASE */
 
     if (navigator.onLine) {
 
+        const { count, error } =
+            await supabaseClient
+                .from("likes")
+                .select("*", {
 
-        const { count, error } = await supabaseClient
-            .from("likes")
-            .select("*", {
-                count: "exact",
-                head: true
-            })
-            .eq("photo_name", photoName);
+                    count: "exact",
+                    head: true
 
+                })
+                .eq(
+                    "photo_name",
+                    photoName
+                );
 
 
         if (!error) {
 
-            total = count || 0;
+            total =
+                count || 0;
 
         } else {
 
@@ -263,187 +443,347 @@ async function compterLikes(photoName) {
 
         }
 
-
     }
 
 
-
-    // Likes en attente dans IndexedDB
+    /* LIKES HORS LIGNE */
 
     try {
 
-
-        const likesOffline = await recupererOffline(
-            STORES.LIKES
-        );
-
-
-        const likesEnAttente = likesOffline.filter(
-            like =>
-                like.photo_name === photoName
-        );
+        const likesOffline =
+            await recupererOffline(
+                STORES.LIKES
+            );
 
 
-        total += likesEnAttente.length;
+        const likesEnAttente =
+            likesOffline.filter(
+                like =>
+                    like.photo_name ===
+                    photoName
+            );
 
 
+        total +=
+            likesEnAttente.length;
 
-    } catch(error) {
+    }
 
+    catch (error) {
 
         console.error(
             "Erreur lecture likes offline",
             error
         );
 
-
     }
-
 
 
     return total;
-
 }
+
+
+/* =========================================================
+   BOUTON VOIR PLUS
+========================================================= */
 
 function gererBoutonVoirPlus() {
 
-    let bouton = document.getElementById("voirPlusPhotos");
+    let bouton =
+        document.getElementById(
+            "voirPlusPhotos"
+        );
+
 
     if (bouton) {
+
         bouton.remove();
+
     }
 
-    if (photosAffichees >= toutesLesPhotos.length) {
+
+    if (
+        photosAffichees >=
+        toutesLesPhotos.length
+    ) {
+
         return;
+
     }
 
-    bouton = document.createElement("button");
-    bouton.id = "voirPlusPhotos";
-    bouton.textContent = "📸 Voir plus de photos";
 
-    bouton.addEventListener("click", () => {
-        afficherPhotosSuivantes();
-    });
+    bouton =
+        document.createElement(
+            "button"
+        );
 
-    const gallerySection = document.getElementById("gallerySection");
-    gallerySection.appendChild(bouton);
+
+    bouton.id =
+        "voirPlusPhotos";
+
+
+    bouton.textContent =
+        "📸 Voir plus de photos";
+
+
+    bouton.addEventListener(
+        "click",
+        () => {
+
+            afficherPhotosSuivantes();
+
+        }
+    );
+
+
+    const gallerySection =
+        document.getElementById(
+            "gallerySection"
+        );
+
+
+    if (gallerySection) {
+
+        gallerySection.appendChild(
+            bouton
+        );
+
+    }
 }
+
+
+/* =========================================================
+   PHOTO AGRANDIE
+========================================================= */
 
 function ouvrirPhoto(url) {
 
-    const overlay = document.createElement("div");
+    const overlay =
+        document.createElement("div");
 
-    overlay.id = "photoOverlay";
+
+    overlay.id =
+        "photoOverlay";
+
 
     overlay.innerHTML = `
-        <img src="${url}" alt="Photo agrandie">
+        <img
+            src="${url}"
+            alt="Photo agrandie"
+        >
     `;
 
-    overlay.addEventListener("click", () => {
-        overlay.remove();
-    });
 
-    document.body.appendChild(overlay);
+    overlay.addEventListener(
+        "click",
+        () => {
 
-}async function chargerTopPhotos() {
+            overlay.remove();
 
-    console.log(
-    "Nouvelle version chargerTopPhotos chargée"
-);
+        }
+    );
 
-    const container = document.getElementById("topPhotos");
 
-    if (!container) return;
+    document.body.appendChild(
+        overlay
+    );
+}
+
+
+/* =========================================================
+   TOP 3 DES PHOTOS
+========================================================= */
+
+async function chargerTopPhotos() {
+
+    const container =
+        document.getElementById(
+            "topPhotos"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
 
     container.innerHTML = "";
 
-    const { data: likes, error } =
-    await supabaseClient
-    .from("likes")
-    .select("*");
+
+    /* RÉCUPÉRATION DES PHOTOS STORAGE */
+
+    const {
+        data: fichiers,
+        error: storageError
+    } =
+        await supabaseClient.storage
+            .from(BUCKET_PHOTOS)
+            .list(DOSSIER_PHOTOS, {
+
+                limit: 1000
+
+            });
 
 
-if (error) {
-    console.error(error);
-    return;
-}
+    if (storageError) {
+
+        console.error(
+            "Erreur Storage Top Photos :",
+            storageError
+        );
+
+        return;
+    }
 
 
-const { data: photosExistantes } =
-    await supabaseClient
-    .from("photos")
-    .select("id");
+    const photosStorage =
+        (fichiers || [])
+            .filter(estUneImage);
 
 
-const idsPhotos =
-    (photosExistantes || [])
-    .map(
-        photo => photo.id
-    );
+    const nomsPhotos =
+        photosStorage.map(
+            photo => photo.name
+        );
 
 
-const likesValides =
-    likes.filter(
-        like =>
-            idsPhotos.includes(
-                like.photo_name
-            )
-    );
+    /* RÉCUPÉRATION DES LIKES */
+
+    const {
+        data: likes,
+        error
+    } =
+        await supabaseClient
+            .from("likes")
+            .select("*");
+
 
     if (error) {
+
         console.error(error);
+
         return;
-        
     }
+
+
+    /* IGNORER LES LIKES
+       QUI NE CORRESPONDENT PLUS
+       À UNE PHOTO EXISTANTE */
+
+    const likesValides =
+        (likes || [])
+            .filter(
+                like =>
+                    nomsPhotos.includes(
+                        like.photo_name
+                    )
+            );
+
 
     const compteLikes = {};
 
-    likesValides.forEach(like => {
 
-        if (!compteLikes[like.photo_name]) {
-            compteLikes[like.photo_name] = 0;
+    likesValides.forEach(
+        like => {
+
+            if (
+                !compteLikes[
+                    like.photo_name
+                ]
+            ) {
+
+                compteLikes[
+                    like.photo_name
+                ] = 0;
+
+            }
+
+
+            compteLikes[
+                like.photo_name
+            ]++;
+
+        }
+    );
+
+
+    const top3 =
+        Object.entries(
+            compteLikes
+        )
+        .sort(
+            (a, b) =>
+                b[1] - a[1]
+        )
+        .slice(
+            0,
+            3
+        );
+
+
+    for (
+        let i = 0;
+        i < top3.length;
+        i++
+    ) {
+
+
+        const [
+            photoName,
+            nbLikes
+        ] =
+            top3[i];
+
+
+        const url =
+            obtenirUrlPhoto(
+                photoName
+            );
+
+
+        let medal =
+            "🏅";
+
+
+        if (i === 0) {
+            medal = "🥇";
         }
 
-        compteLikes[like.photo_name]++;
-    });
+        if (i === 1) {
+            medal = "🥈";
+        }
 
-    const top3 = Object.entries(compteLikes)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3);
-
-    for (let i = 0; i < top3.length; i++) {
-
-        const [photoName, nbLikes] = top3[i];
-
-       const { data: photoData } =
-    await supabaseClient
-    .from("photos")
-    .select("image_url")
-    .eq(
-        "id",
-        photoName
-    )
-    .single();
+        if (i === 2) {
+            medal = "🥉";
+        }
 
 
-if (!photoData) {
-    continue;
-}
-        let medal = "🏅";
+        const card =
+            document.createElement(
+                "div"
+            );
 
-        if (i === 0) medal = "🥇";
-        if (i === 1) medal = "🥈";
-        if (i === 2) medal = "🥉";
 
-        const card = document.createElement("div");
+        card.className =
+            "topPhotoCard";
 
-        card.className = "topPhotoCard";
 
-       card.innerHTML = `
-    <img src="${photoData.image_url}">
-    <p>${medal} ❤️ ${nbLikes}</p>
-`;
+        card.innerHTML = `
+            <img
+                src="${url}"
+                loading="lazy"
+                alt="Photo du podium"
+            >
 
-        container.appendChild(card);
+            <p>
+                ${medal} ❤️ ${nbLikes}
+            </p>
+        `;
+
+
+        container.appendChild(
+            card
+        );
+
     }
 }
