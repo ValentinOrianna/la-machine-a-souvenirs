@@ -6,6 +6,8 @@ const NOMBRE_PAR_PAGE = 30;
 const BUCKET_PHOTOS = "photo mariage";
 const DOSSIER_PHOTOS = "souvenirs";
 
+const photosSelectionnees = new Set();
+
 
 /* =========================================================
    OUTILS STORAGE
@@ -121,6 +123,36 @@ async function chargerGalerie() {
 
             });
 
+const photosDisponibles =
+    new Set(
+        toutesLesPhotos.map(
+            photo =>
+                photo.storageName
+        )
+    );
+
+
+for (
+    const nomPhoto
+    of photosSelectionnees
+) {
+
+    if (
+        !photosDisponibles.has(
+            nomPhoto
+        )
+    ) {
+
+        photosSelectionnees.delete(
+            nomPhoto
+        );
+
+    }
+
+}
+
+
+creerBarreSelection();
 
     const photoCount =
         document.getElementById("photoCount");
@@ -211,6 +243,62 @@ async function afficherPhotosSuivantes() {
             }
         );
 
+/* SÉLECTION */
+
+const selectionButton =
+    document.createElement("button");
+
+
+selectionButton.type =
+    "button";
+
+
+selectionButton.className =
+    "selectionPhotoButton";
+
+
+selectionButton.dataset.photoName =
+    photo.storageName;
+
+
+selectionButton.setAttribute(
+    "aria-label",
+    "Sélectionner cette photo"
+);
+
+
+selectionButton.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+
+        if (
+            photosSelectionnees.has(
+                photo.storageName
+            )
+        ) {
+
+            photosSelectionnees.delete(
+                photo.storageName
+            );
+
+        }
+
+        else {
+
+            photosSelectionnees.add(
+                photo.storageName
+            );
+
+        }
+
+
+        mettreAJourSelection();
+
+    }
+);
 
         /* LIKE */
 
@@ -381,14 +469,17 @@ async function afficherPhotosSuivantes() {
             }
         );
 
+       carte.appendChild(img);
 
-        carte.appendChild(img);
+carte.appendChild(
+    selectionButton
+);
 
-        carte.appendChild(
-            likeButton
-        );
+carte.appendChild(
+    likeButton
+);
 
-
+mettreAJourSelection();
         galleryGrid.appendChild(
             carte
         );
@@ -480,6 +571,163 @@ async function compterLikes(photoName) {
 
 
     return total;
+/* =========================================================
+   SÉLECTION DES PHOTOS
+========================================================= */
+
+function creerBarreSelection() {
+
+    const galleryGrid =
+        document.getElementById("galleryGrid");
+
+    if (!galleryGrid) {
+        return;
+    }
+
+
+    const ancienneBarre =
+        document.getElementById("selectionPhotosBar");
+
+    if (ancienneBarre) {
+        ancienneBarre.remove();
+    }
+
+
+    const barre =
+        document.createElement("div");
+
+    barre.id = "selectionPhotosBar";
+
+    barre.innerHTML = `
+
+        <div id="selectionPhotosCount">
+            0 photo sélectionnée
+        </div>
+
+        <div class="selectionPhotosActions">
+
+            <button
+                id="selectionnerToutesPhotos"
+                type="button"
+            >
+                ☑ Tout sélectionner
+            </button>
+
+            <button
+                id="deselectionnerToutesPhotos"
+                type="button"
+            >
+                ✖ Désélectionner
+            </button>
+
+        </div>
+
+    `;
+
+
+    galleryGrid.before(barre);
+
+
+    document
+        .getElementById("selectionnerToutesPhotos")
+        .addEventListener(
+            "click",
+            () => {
+
+                toutesLesPhotos.forEach(
+                    photo => {
+
+                        photosSelectionnees.add(
+                            photo.storageName
+                        );
+
+                    }
+                );
+
+                mettreAJourSelection();
+
+            }
+        );
+
+
+    document
+        .getElementById("deselectionnerToutesPhotos")
+        .addEventListener(
+            "click",
+            () => {
+
+                photosSelectionnees.clear();
+
+                mettreAJourSelection();
+
+            }
+        );
+
+
+    mettreAJourSelection();
+}
+
+
+function mettreAJourSelection() {
+
+    const compteur =
+        document.getElementById(
+            "selectionPhotosCount"
+        );
+
+
+    const nombre =
+        photosSelectionnees.size;
+
+
+    if (compteur) {
+
+        compteur.textContent =
+            nombre === 1
+                ? "1 photo sélectionnée"
+                : `${nombre} photos sélectionnées`;
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".selectionPhotoButton"
+        )
+        .forEach(
+            bouton => {
+
+                const nomPhoto =
+                    bouton.dataset.photoName;
+
+
+                const estSelectionnee =
+                    photosSelectionnees.has(
+                        nomPhoto
+                    );
+
+
+                bouton.textContent =
+                    estSelectionnee
+                        ? "☑"
+                        : "☐";
+
+
+                bouton.classList.toggle(
+                    "selectionActive",
+                    estSelectionnee
+                );
+
+
+                bouton.setAttribute(
+                    "aria-pressed",
+                    estSelectionnee
+                        ? "true"
+                        : "false"
+                );
+
+            }
+        );
 }
 
 
@@ -786,4 +1034,5 @@ async function chargerTopPhotos() {
         );
 
     }
+}
 }

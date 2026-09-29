@@ -596,3 +596,115 @@ p {
         height: 220px;
     }
 }
+/* =========================================================
+   SELECTION DES PHOTOS
+========================================================= */
+
+.photoCard {
+    position: relative;
+}
+
+
+/* Barre au-dessus de la galerie */
+
+#selectionPhotosBar {
+    margin: 18px 0;
+    padding: 14px;
+
+    border: 1px solid #9b6a32;
+    border-radius: 10px;
+
+    background: rgba(35, 22, 13, 0.92);
+
+    display: flex;
+    flex-wrap: wrap;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+#selectionPhotosCount {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+
+/* Boutons Tout sélectionner / Désélectionner */
+
+.selectionPhotosActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+
+.selectionPhotosActions button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+
+/* Case de sélection sur chaque photo */
+
+.selectionPhotoButton {
+    position: absolute;
+
+    top: 8px;
+    right: 8px;
+
+    z-index: 5;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+
+    border-radius: 50%;
+
+    border: 2px solid #d1a15d;
+
+    background: rgba(20, 14, 10, 0.85);
+
+    cursor: pointer;
+}
+
+
+/* Photo sélectionnée */
+
+.selectionPhotoButton.selectionActive {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 8px rgba(220, 171, 92, 0.9);
+}
+
+
+/* Téléphones */
+
+@media (max-width: 600px) {
+
+    #selectionPhotosBar {
+        justify-content: center;
+        text-align: center;
+    }
+
+
+    #selectionPhotosCount {
+        width: 100%;
+    }
+
+
+    .selectionPhotosActions {
+        justify-content: center;
+    }
+
+}
