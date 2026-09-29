@@ -7,7 +7,7 @@ const BUCKET_PHOTOS = "photo mariage";
 const DOSSIER_PHOTOS = "souvenirs";
 
 const photosSelectionnees = new Set();
-
+let telechargementEnCours = false;
 
 /* =========================================================
    OUTILS STORAGE
@@ -600,31 +600,47 @@ function creerBarreSelection() {
 
     barre.id = "selectionPhotosBar";
 
-    barre.innerHTML = `
+  barre.innerHTML = `
 
-        <div id="selectionPhotosCount">
-            0 photo sélectionnée
-        </div>
+    <div id="selectionPhotosCount">
+        0 photo sélectionnée
+    </div>
 
-        <div class="selectionPhotosActions">
+    <div class="selectionPhotosActions">
 
-            <button
-                id="selectionnerToutesPhotos"
-                type="button"
-            >
-                ☑ Tout sélectionner
-            </button>
+        <button
+            id="selectionnerToutesPhotos"
+            type="button"
+        >
+            ☑ Tout sélectionner
+        </button>
 
-            <button
-                id="deselectionnerToutesPhotos"
-                type="button"
-            >
-                ✖ Désélectionner
-            </button>
+        <button
+            id="deselectionnerToutesPhotos"
+            type="button"
+        >
+            ✖ Désélectionner
+        </button>
 
-        </div>
+        <button
+            id="enregistrerSelectionPhotos"
+            type="button"
+            disabled
+        >
+            📱 Enregistrer mes photos
+        </button>
 
-    `;
+        <button
+            id="telechargerZipPhotos"
+            type="button"
+            disabled
+        >
+            📦 Télécharger en ZIP
+        </button>
+
+    </div>
+
+`;
 
 
     galleryGrid.before(barre);
@@ -653,20 +669,36 @@ function creerBarreSelection() {
 
 
     document
-        .getElementById("deselectionnerToutesPhotos")
-        .addEventListener(
-            "click",
-            () => {
+    .getElementById("deselectionnerToutesPhotos")
+    .addEventListener(
+        "click",
+        () => {
 
-                photosSelectionnees.clear();
+            photosSelectionnees.clear();
 
-                mettreAJourSelection();
+            mettreAJourSelection();
 
-            }
-        );
+        }
+    );
 
 
-    mettreAJourSelection();
+document
+    .getElementById("enregistrerSelectionPhotos")
+    .addEventListener(
+        "click",
+        partagerPhotosSelectionnees
+    );
+
+
+document
+    .getElementById("telechargerZipPhotos")
+    .addEventListener(
+        "click",
+        telechargerPhotosSelectionneesEnZip
+    );
+
+
+mettreAJourSelection();
 }
 
 
@@ -689,7 +721,49 @@ function mettreAJourSelection() {
                 ? "1 photo sélectionnée"
                 : `${nombre} photos sélectionnées`;
 
+    }const boutonEnregistrer =
+    document.getElementById(
+        "enregistrerSelectionPhotos"
+    );
+
+const boutonZip =
+    document.getElementById(
+        "telechargerZipPhotos"
+    );
+
+
+if (!telechargementEnCours) {
+
+    if (boutonEnregistrer) {
+
+        boutonEnregistrer.disabled =
+            nombre === 0;
+
+        boutonEnregistrer.textContent =
+            nombre === 0
+                ? "📱 Enregistrer mes photos"
+                : nombre === 1
+                    ? "📱 Enregistrer 1 photo"
+                    : `📱 Enregistrer ${nombre} photos`;
+
     }
+
+
+    if (boutonZip) {
+
+        boutonZip.disabled =
+            nombre === 0;
+
+        boutonZip.textContent =
+            nombre === 0
+                ? "📦 Télécharger en ZIP"
+                : nombre === 1
+                    ? "📦 ZIP de 1 photo"
+                    : `📦 ZIP de ${nombre} photos`;
+
+    }
+
+}
 
 
     document
@@ -730,6 +804,470 @@ function mettreAJourSelection() {
 
             }
         );
+}
+
+/* =========================================================
+   RÉCUPÉRER LES PHOTOS SÉLECTIONNÉES
+========================================================= */
+
+async function recupererPhotosSelectionnees(bouton) {
+
+    const photos =
+        toutesLesPhotos.filter(
+            photo =>
+                photosSelectionnees.has(
+                    photo.storageName
+                )
+        );
+
+
+    const fichiers = [];
+    const erreurs = [];
+
+
+    for (
+        let i = 0;
+        i < photos.length;
+        i++
+    ) {
+
+        const photo = photos[i];
+
+
+        if (bouton) {
+
+            bouton.textContent =
+                `⬇ Récupération ${i + 1} / ${photos.length}`;
+
+        }
+
+
+        const {
+            data: blob,
+            error
+        } =
+            await supabaseClient.storage
+                .from(BUCKET_PHOTOS)
+                .download(
+                    photo.storagePath
+                );
+
+
+        if (error || !blob) {
+
+            console.error(
+                "Erreur récupération photo :",
+                photo.storageName,
+                error
+            );
+
+
+            erreurs.push(
+                photo.storageName
+            );
+
+
+            continue;
+        }
+
+
+        const fichier =
+            new File(
+                [blob],
+                photo.storageName,
+                {
+                    type:
+                        blob.type ||
+                        "image/jpeg"
+                }
+            );
+
+
+        fichiers.push(fichier);
+
+    }
+
+
+    return {
+        fichiers,
+        erreurs
+    };
+}
+
+
+/* =========================================================
+   ENREGISTRER / PARTAGER LES PHOTOS
+========================================================= */
+
+async function partagerPhotosSelectionnees() {
+
+    if (telechargementEnCours) {
+        return;
+    }
+
+
+    if (
+        photosSelectionnees.size === 0
+    ) {
+
+        alert(
+            "Sélectionnez au moins une photo."
+        );
+
+        return;
+    }
+
+
+    const bouton =
+        document.getElementById(
+            "enregistrerSelectionPhotos"
+        );
+
+
+    telechargementEnCours = true;
+
+
+    if (bouton) {
+
+        bouton.disabled = true;
+
+        bouton.textContent =
+            "⚙️ Préparation...";
+
+    }
+
+
+    try {
+
+        const {
+            fichiers,
+            erreurs
+        } =
+            await recupererPhotosSelectionnees(
+                bouton
+            );
+
+
+        if (!fichiers.length) {
+
+            throw new Error(
+                "Aucune photo récupérée."
+            );
+
+        }
+
+
+        const partagePossible =
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({
+                files: fichiers
+            });
+
+
+        if (!partagePossible) {
+
+            alert(
+                "Le partage multiple n'est pas disponible sur ce téléphone.\n\nUn fichier ZIP va être préparé à la place."
+            );
+
+
+            await creerEtTelechargerZip(
+                fichiers,
+                bouton
+            );
+
+
+            return;
+        }
+
+
+        await navigator.share({
+
+            files: fichiers,
+
+            title:
+                "La Machine à Souvenirs",
+
+            text:
+                "Photos du mariage"
+
+        });
+
+
+        if (erreurs.length > 0) {
+
+            alert(
+                `${erreurs.length} photo(s) n'ont pas pu être récupérée(s).`
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        /*
+           AbortError = l'utilisateur
+           a simplement fermé le menu.
+        */
+
+        if (
+            error.name !==
+            "AbortError"
+        ) {
+
+            console.error(
+                "Erreur partage photos :",
+                error
+            );
+
+
+            alert(
+                "Impossible de préparer les photos. Vous pouvez essayer le téléchargement ZIP."
+            );
+
+        }
+
+    }
+
+    finally {
+
+        telechargementEnCours =
+            false;
+
+
+        mettreAJourSelection();
+
+    }
+
+}
+
+
+/* =========================================================
+   TÉLÉCHARGEMENT ZIP
+========================================================= */
+
+async function telechargerPhotosSelectionneesEnZip() {
+
+    if (telechargementEnCours) {
+        return;
+    }
+
+
+    if (
+        photosSelectionnees.size === 0
+    ) {
+
+        alert(
+            "Sélectionnez au moins une photo."
+        );
+
+        return;
+    }
+
+
+    const bouton =
+        document.getElementById(
+            "telechargerZipPhotos"
+        );
+
+
+    telechargementEnCours = true;
+
+
+    if (bouton) {
+
+        bouton.disabled = true;
+
+        bouton.textContent =
+            "⚙️ Préparation...";
+
+    }
+
+
+    try {
+
+        const {
+            fichiers,
+            erreurs
+        } =
+            await recupererPhotosSelectionnees(
+                bouton
+            );
+
+
+        if (!fichiers.length) {
+
+            throw new Error(
+                "Aucune photo récupérée."
+            );
+
+        }
+
+
+        await creerEtTelechargerZip(
+            fichiers,
+            bouton
+        );
+
+
+        if (erreurs.length > 0) {
+
+            alert(
+                `${erreurs.length} photo(s) n'ont pas pu être ajoutée(s) au ZIP.`
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur création ZIP :",
+            error
+        );
+
+
+        alert(
+            "Impossible de préparer le ZIP. Essayez avec moins de photos."
+        );
+
+    }
+
+    finally {
+
+        telechargementEnCours =
+            false;
+
+
+        mettreAJourSelection();
+
+    }
+
+}
+
+
+/* =========================================================
+   CRÉER LE ZIP
+========================================================= */
+
+async function creerEtTelechargerZip(
+    fichiers,
+    bouton = null
+) {
+
+    if (
+        typeof JSZip ===
+        "undefined"
+    ) {
+
+        throw new Error(
+            "JSZip n'est pas chargé."
+        );
+
+    }
+
+
+    const zip =
+        new JSZip();
+
+
+    fichiers.forEach(
+        fichier => {
+
+            zip.file(
+                fichier.name,
+                fichier
+            );
+
+        }
+    );
+
+
+    if (bouton) {
+
+        bouton.textContent =
+            "📦 Création du ZIP...";
+
+    }
+
+
+    const archive =
+        await zip.generateAsync(
+
+            {
+                type: "blob",
+
+                /*
+                   Les photos JPG sont déjà
+                   compressées. On évite de
+                   les recompresser.
+                */
+
+                compression:
+                    "STORE"
+            },
+
+            progression => {
+
+                if (bouton) {
+
+                    bouton.textContent =
+                        `📦 Création ${Math.round(
+                            progression.percent
+                        )} %`;
+
+                }
+
+            }
+
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            archive
+        );
+
+
+    const lien =
+        document.createElement(
+            "a"
+        );
+
+
+    lien.href =
+        url;
+
+
+    lien.download =
+        "La-Machine-a-Souvenirs.zip";
+
+
+    document.body.appendChild(
+        lien
+    );
+
+
+    lien.click();
+
+
+    lien.remove();
+
+
+    setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        10000
+    );
+
 }
 
 

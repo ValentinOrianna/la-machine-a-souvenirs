@@ -1,4 +1,4 @@
-const CACHE_NAME = "la-machine-a-souvenirs-v34";
+const CACHE_NAME = "la-machine-a-souvenirs-v35";
 
 
 const FILES_TO_CACHE = [
