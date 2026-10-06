@@ -627,7 +627,7 @@ function creerBarreSelection() {
             type="button"
             disabled
         >
-            📱 Enregistrer mes photos
+            📱 Envoyer mes photos
         </button>
 
         <button
