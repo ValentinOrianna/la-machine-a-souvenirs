@@ -741,7 +741,7 @@ if (!telechargementEnCours) {
 
         boutonEnregistrer.textContent =
             nombre === 0
-                ? "📱 Enregistrer mes photos"
+                ? "📱 Envoyer mes photos"
                 : nombre === 1
                     ? "📱 Enregistrer 1 photo"
                     : `📱 Enregistrer ${nombre} photos`;
