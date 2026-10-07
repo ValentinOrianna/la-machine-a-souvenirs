@@ -388,26 +388,20 @@ async function afficherPageGalerie(numeroPage = pageGalerie) {
         const img =
             document.createElement("img");
 
+            
 
-        img.src =
-            photo.preview_url ||
-            photo.image_url;
+       img.onerror = () => {
 
+    img.onerror = null;
 
-        /*
-           Si l'aperçu léger
-           n'existe pas encore,
-           on utilise l'original.
-        */
+    img.src =
+        photo.image_url;
 
-        img.onerror = () => {
+};
 
-            img.onerror = null;
-
-            img.src =
-                photo.image_url;
-
-        };
+img.src =
+    photo.preview_url ||
+    photo.image_url;
 
 
         img.loading =
