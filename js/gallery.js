@@ -1,13 +1,15 @@
 let toutesLesPhotos = [];
-let photosAffichees = 0;
+let pageGalerie = 0;
 
-const NOMBRE_PAR_PAGE = 30;
+const NOMBRE_PAR_PAGE = 20;
 
 const BUCKET_PHOTOS = "photo mariage";
 const DOSSIER_PHOTOS = "souvenirs";
+const DOSSIER_APERCUS = "apercus";
 
 const photosSelectionnees = new Set();
 let telechargementEnCours = false;
+const likesParPhoto = new Map();
 
 /* =========================================================
    OUTILS STORAGE
@@ -41,6 +43,128 @@ function obtenirUrlPhoto(nomFichier) {
 
     return data.publicUrl;
 }
+function obtenirUrlApercu(nomFichier) {
+
+    const chemin =
+        `${DOSSIER_APERCUS}/${nomFichier}.preview.jpg`;
+
+    const { data } =
+        supabaseClient.storage
+            .from(BUCKET_PHOTOS)
+            .getPublicUrl(chemin);
+
+    return data.publicUrl;
+}
+/* =========================================================
+   CACHE DES LIKES
+========================================================= */
+
+async function chargerCompteursLikes() {
+
+    likesParPhoto.clear();
+
+
+    /* Likes déjà enregistrés dans Supabase */
+
+    if (navigator.onLine) {
+
+        const { data: likes, error } =
+            await supabaseClient
+                .from("likes")
+                .select("photo_name");
+
+
+        if (error) {
+
+            console.error(
+                "Erreur chargement des likes :",
+                error
+            );
+
+        } else {
+
+            (likes || []).forEach(
+                like => {
+
+                    const totalActuel =
+                        likesParPhoto.get(
+                            like.photo_name
+                        ) || 0;
+
+
+                    likesParPhoto.set(
+                        like.photo_name,
+                        totalActuel + 1
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    /* Likes enregistrés hors ligne */
+
+    try {
+
+        const likesOffline =
+            await recupererOffline(
+                STORES.LIKES
+            );
+
+
+        (likesOffline || []).forEach(
+            like => {
+
+                const totalActuel =
+                    likesParPhoto.get(
+                        like.photo_name
+                    ) || 0;
+
+
+                likesParPhoto.set(
+                    like.photo_name,
+                    totalActuel + 1
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur lecture likes hors ligne :",
+            error
+        );
+
+    }
+
+}
+
+
+function obtenirNombreLikes(photoName) {
+
+    return (
+        likesParPhoto.get(
+            photoName
+        ) || 0
+    );
+
+}
+
+
+function ajouterLikeCache(photoName) {
+
+    likesParPhoto.set(
+        photoName,
+        obtenirNombreLikes(photoName) + 1
+    );
+
+}
 
 
 /* =========================================================
@@ -64,7 +188,7 @@ async function chargerGalerie() {
 
     galleryGrid.innerHTML = "";
 
-    photosAffichees = 0;
+     pageGalerie = 0;
 
 
     const { data, error } =
@@ -114,10 +238,13 @@ async function chargerGalerie() {
                         `${DOSSIER_PHOTOS}/${photo.name}`,
 
                     image_url:
-                        obtenirUrlPhoto(photo.name),
+    obtenirUrlPhoto(photo.name),
 
-                    likeKey:
-                        photo.name
+preview_url:
+    obtenirUrlApercu(photo.name),
+
+likeKey:
+    photo.name
 
                 };
 
@@ -160,13 +287,26 @@ creerBarreSelection();
 
     if (photoCount) {
 
-        photoCount.textContent =
-            `📸 ${toutesLesPhotos.length} souvenirs capturés`;
+    photoCount.textContent =
+        `📸 ${toutesLesPhotos.length} souvenirs capturés`;
 
-    }
+}
 
 
-    afficherPhotosSuivantes();
+/*
+   Une seule récupération globale
+   des likes au chargement.
+*/
+
+await chargerCompteursLikes();
+
+
+/*
+   Affichage de la première page.
+*/
+
+await afficherPageGalerie(0);
+
 }
 
 
@@ -174,7 +314,7 @@ creerBarreSelection();
    AFFICHAGE DES PHOTOS
 ========================================================= */
 
-async function afficherPhotosSuivantes() {
+async function afficherPageGalerie(numeroPage = pageGalerie) {
 
     const galleryGrid =
         document.getElementById("galleryGrid");
@@ -185,19 +325,54 @@ async function afficherPhotosSuivantes() {
     }
 
 
+    const nombrePages =
+        Math.max(
+            1,
+            Math.ceil(
+                toutesLesPhotos.length /
+                NOMBRE_PAR_PAGE
+            )
+        );
+
+
+    pageGalerie =
+        Math.min(
+            Math.max(numeroPage, 0),
+            nombrePages - 1
+        );
+
+
+    const debut =
+        pageGalerie *
+        NOMBRE_PAR_PAGE;
+
+
+    const fin =
+        debut +
+        NOMBRE_PAR_PAGE;
+
+
     const photosAShow =
         toutesLesPhotos.slice(
-
-            photosAffichees,
-
-            photosAffichees +
-            NOMBRE_PAR_PAGE
-
+            debut,
+            fin
         );
+
+
+    /*
+       On retire les photos
+       de la page précédente.
+    */
+
+    galleryGrid.innerHTML = "";
 
 
     for (const photo of photosAShow) {
 
+
+        /* =========================
+           CARTE PHOTO
+        ========================= */
 
         const carte =
             document.createElement("div");
@@ -206,14 +381,33 @@ async function afficherPhotosSuivantes() {
             "photoCard";
 
 
-        /* PHOTO */
+        /* =========================
+           PHOTO
+        ========================= */
 
         const img =
             document.createElement("img");
 
 
         img.src =
+            photo.preview_url ||
             photo.image_url;
+
+
+        /*
+           Si l'aperçu léger
+           n'existe pas encore,
+           on utilise l'original.
+        */
+
+        img.onerror = () => {
+
+            img.onerror = null;
+
+            img.src =
+                photo.image_url;
+
+        };
 
 
         img.loading =
@@ -243,67 +437,78 @@ async function afficherPhotosSuivantes() {
             }
         );
 
-/* SÉLECTION */
 
-const selectionButton =
-    document.createElement("button");
+        /* =========================
+           SÉLECTION
+        ========================= */
 
-
-selectionButton.type =
-    "button";
-
-
-selectionButton.className =
-    "selectionPhotoButton";
-
-
-selectionButton.dataset.photoName =
-    photo.storageName;
-
-
-selectionButton.setAttribute(
-    "aria-label",
-    "Sélectionner cette photo"
-);
-
-
-selectionButton.addEventListener(
-    "click",
-    event => {
-
-        event.stopPropagation();
-
-
-        if (
-            photosSelectionnees.has(
-                photo.storageName
-            )
-        ) {
-
-            photosSelectionnees.delete(
-                photo.storageName
+        const selectionButton =
+            document.createElement(
+                "button"
             );
 
-        }
 
-        else {
-
-            photosSelectionnees.add(
-                photo.storageName
-            );
-
-        }
+        selectionButton.type =
+            "button";
 
 
-        mettreAJourSelection();
+        selectionButton.className =
+            "selectionPhotoButton";
 
-    }
-);
 
-        /* LIKE */
+        selectionButton.dataset.photoName =
+            photo.storageName;
+
+
+        selectionButton.setAttribute(
+            "aria-label",
+            "Sélectionner cette photo"
+        );
+
+
+        selectionButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                if (
+                    photosSelectionnees.has(
+                        photo.storageName
+                    )
+                ) {
+
+                    photosSelectionnees.delete(
+                        photo.storageName
+                    );
+
+                }
+
+                else {
+
+                    photosSelectionnees.add(
+                        photo.storageName
+                    );
+
+                }
+
+
+                mettreAJourSelection();
+
+            }
+        );
+
+
+        /* =========================
+           LIKE
+        ========================= */
 
         const likeButton =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
+
 
         likeButton.className =
             "likeButton";
@@ -319,8 +524,14 @@ selectionButton.addEventListener(
             );
 
 
+        /*
+           IMPORTANT :
+           plus aucune requête Supabase
+           individuelle ici.
+        */
+
         const nombreLikes =
-            await compterLikes(
+            obtenirNombreLikes(
                 identifiantPhoto
             );
 
@@ -387,6 +598,16 @@ selectionButton.addEventListener(
                     await afficherElementsEnAttente();
 
 
+                    /*
+                       Mise à jour immédiate
+                       du cache local des likes.
+                    */
+
+                    ajouterLikeCache(
+                        identifiantPhoto
+                    );
+
+
                     localStorage.setItem(
                         `like-${identifiantPhoto}`,
                         "true"
@@ -394,7 +615,7 @@ selectionButton.addEventListener(
 
 
                     const nouveauTotal =
-                        await compterLikes(
+                        obtenirNombreLikes(
                             identifiantPhoto
                         );
 
@@ -414,6 +635,7 @@ selectionButton.addEventListener(
 
 
                     return;
+
                 }
 
 
@@ -441,7 +663,18 @@ selectionButton.addEventListener(
                     );
 
                     return;
+
                 }
+
+
+                /*
+                   Supabase a accepté le like :
+                   on met à jour notre cache.
+                */
+
+                ajouterLikeCache(
+                    identifiantPhoto
+                );
 
 
                 localStorage.setItem(
@@ -451,7 +684,7 @@ selectionButton.addEventListener(
 
 
                 const nouveauTotal =
-                    await compterLikes(
+                    obtenirNombreLikes(
                         identifiantPhoto
                     );
 
@@ -469,17 +702,26 @@ selectionButton.addEventListener(
             }
         );
 
-       carte.appendChild(img);
 
-carte.appendChild(
-    selectionButton
-);
+        /* =========================
+           AJOUT DANS LA CARTE
+        ========================= */
 
-carte.appendChild(
-    likeButton
-);
+        carte.appendChild(
+            img
+        );
 
-mettreAJourSelection();
+
+        carte.appendChild(
+            selectionButton
+        );
+
+
+        carte.appendChild(
+            likeButton
+        );
+
+
         galleryGrid.appendChild(
             carte
         );
@@ -487,11 +729,20 @@ mettreAJourSelection();
     }
 
 
-    photosAffichees +=
-        photosAShow.length;
+    /*
+       Remet correctement les coches
+       des photos déjà sélectionnées.
+    */
+
+    mettreAJourSelection();
 
 
-    gererBoutonVoirPlus();
+    /*
+       Affiche Précédentes / Suivantes.
+    */
+
+    gererPagination();
+
 }
 
 
@@ -501,77 +752,11 @@ mettreAJourSelection();
 
 async function compterLikes(photoName) {
 
-    let total = 0;
+    return obtenirNombreLikes(
+        photoName
+    );
 
-
-    /* LIKES SUPABASE */
-
-    if (navigator.onLine) {
-
-        const { count, error } =
-            await supabaseClient
-                .from("likes")
-                .select("*", {
-
-                    count: "exact",
-                    head: true
-
-                })
-                .eq(
-                    "photo_name",
-                    photoName
-                );
-
-
-        if (!error) {
-
-            total =
-                count || 0;
-
-        } else {
-
-            console.error(error);
-
-        }
-
-    }
-
-
-    /* LIKES HORS LIGNE */
-
-    try {
-
-        const likesOffline =
-            await recupererOffline(
-                STORES.LIKES
-            );
-
-
-        const likesEnAttente =
-            likesOffline.filter(
-                like =>
-                    like.photo_name ===
-                    photoName
-            );
-
-
-        total +=
-            likesEnAttente.length;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Erreur lecture likes offline",
-            error
-        );
-
-    }
-
-
-    return total;
-    }
+}
 
 /* =========================================================
    SÉLECTION DES PHOTOS
@@ -1272,57 +1457,10 @@ async function creerEtTelechargerZip(
 
 
 /* =========================================================
-   BOUTON VOIR PLUS
+   PAGINATION GALERIE
 ========================================================= */
 
-function gererBoutonVoirPlus() {
-
-    let bouton =
-        document.getElementById(
-            "voirPlusPhotos"
-        );
-
-
-    if (bouton) {
-
-        bouton.remove();
-
-    }
-
-
-    if (
-        photosAffichees >=
-        toutesLesPhotos.length
-    ) {
-
-        return;
-
-    }
-
-
-    bouton =
-        document.createElement(
-            "button"
-        );
-
-
-    bouton.id =
-        "voirPlusPhotos";
-
-
-    bouton.textContent =
-        "📸 Voir plus de photos";
-
-
-    bouton.addEventListener(
-        "click",
-        () => {
-
-            afficherPhotosSuivantes();
-
-        }
-    );
-
+function gererPagination() {
 
     const gallerySection =
         document.getElementById(
@@ -1330,15 +1468,166 @@ function gererBoutonVoirPlus() {
         );
 
 
-    if (gallerySection) {
+    if (!gallerySection) {
+        return;
+    }
 
-        gallerySection.appendChild(
-            bouton
+
+    const anciennePagination =
+        document.getElementById(
+            "paginationGalerie"
         );
 
+
+    if (anciennePagination) {
+        anciennePagination.remove();
     }
+
+
+    const nombrePages =
+        Math.ceil(
+            toutesLesPhotos.length /
+            NOMBRE_PAR_PAGE
+        );
+
+
+    if (nombrePages <= 1) {
+    
+    return;
+    }
+
+
+    const pagination =
+        document.createElement("div");
+
+
+    pagination.id =
+        "paginationGalerie";
+
+
+    /* BOUTON PRÉCÉDENT */
+
+    const boutonPrecedent =
+        document.createElement("button");
+
+
+    boutonPrecedent.type =
+        "button";
+
+
+    boutonPrecedent.textContent =
+        "← Précédentes";
+
+
+    boutonPrecedent.disabled =
+        pageGalerie === 0;
+
+
+    boutonPrecedent.addEventListener(
+        "click",
+        async () => {
+
+            await afficherPageGalerie(
+                pageGalerie - 1
+            );
+
+            remettreGalerieEnVue();
+
+        }
+    );
+
+
+    /* NUMÉRO DE PAGE */
+
+    const indication =
+        document.createElement("span");
+
+
+    indication.className =
+        "paginationGalerieInfo";
+
+
+    indication.textContent =
+        `Page ${pageGalerie + 1} / ${nombrePages}`;
+
+
+    /* BOUTON SUIVANT */
+
+    const boutonSuivant =
+        document.createElement("button");
+
+
+    boutonSuivant.type =
+        "button";
+
+
+    boutonSuivant.textContent =
+        "Suivantes →";
+
+
+    boutonSuivant.disabled =
+        pageGalerie >= nombrePages - 1;
+
+
+    boutonSuivant.addEventListener(
+        "click",
+        async () => {
+
+            await afficherPageGalerie(
+                pageGalerie + 1
+            );
+
+            remettreGalerieEnVue();
+
+        }
+    );
+
+
+    pagination.appendChild(
+        boutonPrecedent
+    );
+
+
+    pagination.appendChild(
+        indication
+    );
+
+
+    pagination.appendChild(
+        boutonSuivant
+    );
+
+
+    gallerySection.appendChild(
+        pagination
+    );
+
 }
 
+
+/* =========================================================
+   REMONTER AU DÉBUT DE LA GALERIE
+========================================================= */
+
+function remettreGalerieEnVue() {
+
+    const galleryGrid =
+        document.getElementById(
+            "galleryGrid"
+        );
+
+
+    if (!galleryGrid) {
+        return;
+    }
+
+
+    galleryGrid.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
 
 /* =========================================================
    PHOTO AGRANDIE
@@ -1523,10 +1812,10 @@ async function chargerTopPhotos() {
             top3[i];
 
 
-        const url =
-            obtenirUrlPhoto(
-                photoName
-            );
+      const url =
+    obtenirUrlApercu(
+        photoName
+    );
 
 
         let medal =
