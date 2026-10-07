@@ -12,6 +12,24 @@ let telechargementEnCours = false;
 const likesParPhoto = new Map();
 
 /* =========================================================
+   DÉTECTION IPHONE / IPAD
+========================================================= */
+
+function estAppareilIOS() {
+
+    return (
+        /iPad|iPhone|iPod/.test(
+            navigator.userAgent
+        ) ||
+
+        (
+            navigator.platform === "MacIntel" &&
+            navigator.maxTouchPoints > 1
+        )
+    );
+
+}
+/* =========================================================
    OUTILS STORAGE
 ========================================================= */
 
@@ -388,7 +406,7 @@ async function afficherPageGalerie(numeroPage = pageGalerie) {
         const img =
             document.createElement("img");
 
-            
+
 
        img.onerror = () => {
 
@@ -767,7 +785,9 @@ function creerBarreSelection() {
 
 
     const ancienneBarre =
-        document.getElementById("selectionPhotosBar");
+        document.getElementById(
+            "selectionPhotosBar"
+        );
 
     if (ancienneBarre) {
         ancienneBarre.remove();
@@ -777,56 +797,66 @@ function creerBarreSelection() {
     const barre =
         document.createElement("div");
 
-    barre.id = "selectionPhotosBar";
-
-  barre.innerHTML = `
-
-    <div id="selectionPhotosCount">
-        0 photo sélectionnée
-    </div>
-
-    <div class="selectionPhotosActions">
-
-        <button
-            id="selectionnerToutesPhotos"
-            type="button"
-        >
-            ☑ Tout sélectionner
-        </button>
-
-        <button
-            id="deselectionnerToutesPhotos"
-            type="button"
-        >
-            ✖ Désélectionner
-        </button>
-
-        <button
-            id="enregistrerSelectionPhotos"
-            type="button"
-            disabled
-        >
-            📱 Envoyer mes photos
-        </button>
-
-        <button
-            id="telechargerZipPhotos"
-            type="button"
-            disabled
-        >
-            📦 Télécharger en ZIP
-        </button>
-
-    </div>
-
-`;
+    barre.id =
+        "selectionPhotosBar";
 
 
-    galleryGrid.before(barre);
+    barre.innerHTML = `
 
+        <div id="selectionPhotosCount">
+            0 photo sélectionnée
+        </div>
+
+        <div class="selectionPhotosActions">
+
+            <button
+                id="selectionnerToutesPhotos"
+                type="button"
+            >
+                ☑ Tout sélectionner
+            </button>
+
+            <button
+                id="deselectionnerToutesPhotos"
+                type="button"
+            >
+                ✖ Désélectionner
+            </button>
+
+            <button
+                id="enregistrerSelectionPhotos"
+                type="button"
+                disabled
+            >
+                📤 Partager mes photos
+            </button>
+
+            <button
+                id="telechargerZipPhotos"
+                type="button"
+                disabled
+            >
+                📱 Enregistrer sur Android
+            </button>
+
+        </div>
+
+    `;
+
+
+    galleryGrid.before(
+        barre
+    );
+
+
+    /* =========================
+       TOUT SÉLECTIONNER
+    ========================= */
 
     document
-        .getElementById("selectionnerToutesPhotos")
+        .getElementById(
+            "selectionnerToutesPhotos"
+        )
         .addEventListener(
             "click",
             () => {
@@ -841,45 +871,91 @@ function creerBarreSelection() {
                     }
                 );
 
+
                 mettreAJourSelection();
 
             }
         );
 
 
+    /* =========================
+       TOUT DÉSÉLECTIONNER
+    ========================= */
+
     document
-    .getElementById("deselectionnerToutesPhotos")
-    .addEventListener(
-        "click",
-        () => {
+        .getElementById(
+            "deselectionnerToutesPhotos"
+        )
+        .addEventListener(
+            "click",
+            () => {
 
-            photosSelectionnees.clear();
+                photosSelectionnees.clear();
 
-            mettreAJourSelection();
+                mettreAJourSelection();
 
-        }
-    );
-
-
-document
-    .getElementById("enregistrerSelectionPhotos")
-    .addEventListener(
-        "click",
-        partagerPhotosSelectionnees
-    );
+            }
+        );
 
 
-document
-    .getElementById("telechargerZipPhotos")
-    .addEventListener(
-        "click",
-        telechargerPhotosSelectionneesEnZip
-    );
+    const boutonEnregistrer =
+        document.getElementById(
+            "enregistrerSelectionPhotos"
+        );
 
 
-mettreAJourSelection();
+    const boutonZip =
+        document.getElementById(
+            "telechargerZipPhotos"
+        );
+
+
+    /* =========================
+       IPHONE / IPAD
+    ========================= */
+
+    if (estAppareilIOS()) {
+
+        boutonEnregistrer.addEventListener(
+            "click",
+            afficherSelectionIPhone
+        );
+
+
+        boutonZip.style.display =
+            "none";
+
+    }
+
+
+    /* =========================
+       ANDROID / PC
+    ========================= */
+
+    else {
+
+        boutonEnregistrer.addEventListener(
+            "click",
+            partagerPhotosSelectionnees
+        );
+
+
+        boutonZip.addEventListener(
+            "click",
+            telechargerPhotosSelectionneesEnZip
+        );
+
+    }
+
+
+    mettreAJourSelection();
+
 }
 
+
+/* =========================================================
+   METTRE À JOUR LA SÉLECTION
+========================================================= */
 
 function mettreAJourSelection() {
 
@@ -900,50 +976,105 @@ function mettreAJourSelection() {
                 ? "1 photo sélectionnée"
                 : `${nombre} photos sélectionnées`;
 
-    }const boutonEnregistrer =
-    document.getElementById(
-        "enregistrerSelectionPhotos"
-    );
-
-const boutonZip =
-    document.getElementById(
-        "telechargerZipPhotos"
-    );
+    }
 
 
-if (!telechargementEnCours) {
+    const boutonEnregistrer =
+        document.getElementById(
+            "enregistrerSelectionPhotos"
+        );
 
-    if (boutonEnregistrer) {
 
-        boutonEnregistrer.disabled =
-            nombre === 0;
+    const boutonZip =
+        document.getElementById(
+            "telechargerZipPhotos"
+        );
 
-        boutonEnregistrer.textContent =
-            nombre === 0
-                ? "📱 Envoyer mes photos"
-                : nombre === 1
-                    ? "📱 Enregistrer 1 photo"
-                    : `📱 Enregistrer ${nombre} photos`;
+
+    if (!telechargementEnCours) {
+
+
+        /* =========================
+           IPHONE / IPAD
+        ========================= */
+
+        if (estAppareilIOS()) {
+
+            if (boutonEnregistrer) {
+
+                boutonEnregistrer.disabled =
+                    nombre === 0;
+
+
+                boutonEnregistrer.textContent =
+                    nombre === 0
+                        ? "📱 Enregistrer sur iPhone"
+                        : nombre === 1
+                            ? "📱 Enregistrer 1 photo sur iPhone"
+                            : `📱 Enregistrer ${nombre} photos sur iPhone`;
+
+            }
+
+
+            if (boutonZip) {
+
+                boutonZip.style.display =
+                    "none";
+
+            }
+
+        }
+
+
+        /* =========================
+           ANDROID / PC
+        ========================= */
+
+        else {
+
+            if (boutonEnregistrer) {
+
+                boutonEnregistrer.disabled =
+                    nombre === 0;
+
+
+                boutonEnregistrer.textContent =
+                    nombre === 0
+                        ? "📤 Partager mes photos"
+                        : nombre === 1
+                            ? "📤 Partager 1 photo"
+                            : `📤 Partager ${nombre} photos`;
+
+            }
+
+
+            if (boutonZip) {
+
+                boutonZip.style.display =
+                    "";
+
+
+                boutonZip.disabled =
+                    nombre === 0;
+
+
+                boutonZip.textContent =
+                    nombre === 0
+                        ? "📱 Enregistrer sur Android"
+                        : nombre === 1
+                            ? "📱 Enregistrer 1 photo sur Android"
+                            : `📱 Enregistrer ${nombre} photos sur Android`;
+
+            }
+
+        }
 
     }
 
 
-    if (boutonZip) {
-
-        boutonZip.disabled =
-            nombre === 0;
-
-        boutonZip.textContent =
-            nombre === 0
-                ? "📦 Télécharger en ZIP"
-                : nombre === 1
-                    ? "📦 ZIP de 1 photo"
-                    : `📦 ZIP de ${nombre} photos`;
-
-    }
-
-}
-
+    /* =========================
+       COCHES SUR LES PHOTOS
+    ========================= */
 
     document
         .querySelectorAll(
@@ -983,6 +1114,7 @@ if (!telechargementEnCours) {
 
             }
         );
+
 }
 
 /* =========================================================
@@ -1222,6 +1354,233 @@ async function partagerPhotosSelectionnees() {
 
 }
 
+/* =========================================================
+   ENREGISTRER SUR IPHONE
+========================================================= */
+
+function afficherSelectionIPhone() {
+
+    if (photosSelectionnees.size === 0) {
+
+        alert(
+            "Sélectionnez au moins une photo."
+        );
+
+        return;
+    }
+
+
+    const ancienOverlay =
+        document.getElementById(
+            "selectionIPhoneOverlay"
+        );
+
+
+    if (ancienOverlay) {
+        ancienOverlay.remove();
+    }
+
+
+    const photos =
+        toutesLesPhotos.filter(
+            photo =>
+                photosSelectionnees.has(
+                    photo.storageName
+                )
+        );
+
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.id =
+        "selectionIPhoneOverlay";
+
+
+    const modal =
+        document.createElement("div");
+
+    modal.className =
+        "selectionIPhoneModal";
+
+
+    const boutonFermer =
+        document.createElement("button");
+
+    boutonFermer.type =
+        "button";
+
+    boutonFermer.className =
+        "fermerSelectionIPhone";
+
+    boutonFermer.textContent =
+        "✕";
+
+
+    boutonFermer.addEventListener(
+        "click",
+        () => {
+
+            overlay.remove();
+
+        }
+    );
+
+
+    const titre =
+        document.createElement("h2");
+
+    titre.textContent =
+        "📱 Enregistrer sur iPhone";
+
+
+    const aide =
+        document.createElement("p");
+
+    aide.className =
+        "aideSelectionIPhone";
+
+    aide.textContent =
+        "Ouvrez une photo, puis maintenez votre doigt dessus et choisissez « Enregistrer dans Photos » ou « Ajouter à Photos ».";
+
+
+    const compteur =
+        document.createElement("p");
+
+    compteur.className =
+        "compteurSelectionIPhone";
+
+    compteur.textContent =
+        `${photos.length} photo${photos.length > 1 ? "s" : ""} sélectionnée${photos.length > 1 ? "s" : ""}`;
+
+
+    modal.appendChild(
+        boutonFermer
+    );
+
+    modal.appendChild(
+        titre
+    );
+
+    modal.appendChild(
+        aide
+    );
+
+    modal.appendChild(
+        compteur
+    );
+
+
+    const grille =
+        document.createElement("div");
+
+    grille.className =
+        "grilleSelectionIPhone";
+
+
+    photos.forEach(
+        photo => {
+
+            const carte =
+                document.createElement("div");
+
+            carte.className =
+                "carteSelectionIPhone";
+
+
+            const img =
+                document.createElement("img");
+
+            img.loading =
+                "lazy";
+
+            img.alt =
+                "Photo sélectionnée";
+
+
+            img.onerror = () => {
+
+                img.onerror = null;
+
+                img.src =
+                    photo.image_url;
+
+            };
+
+
+            img.src =
+                photo.preview_url ||
+                photo.image_url;
+
+
+            const lien =
+                document.createElement("a");
+
+            /*
+               Toujours l'original haute qualité
+               depuis le dossier souvenirs.
+            */
+
+            lien.href =
+                photo.image_url;
+
+            lien.target =
+                "_blank";
+
+            lien.rel =
+                "noopener";
+
+            lien.className =
+                "boutonEnregistrerIPhone";
+
+            lien.textContent =
+                "📱 Ouvrir l'original";
+
+
+            carte.appendChild(
+                img
+            );
+
+            carte.appendChild(
+                lien
+            );
+
+            grille.appendChild(
+                carte
+            );
+
+        }
+    );
+
+
+    modal.appendChild(
+        grille
+    );
+
+    overlay.appendChild(
+        modal
+    );
+
+
+    overlay.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === overlay) {
+
+                overlay.remove();
+
+            }
+
+        }
+    );
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+}
 
 /* =========================================================
    TÉLÉCHARGEMENT ZIP
